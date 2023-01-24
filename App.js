@@ -1,10 +1,10 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
-import { Colors } from "./constant";
+import { Color } from "./constant";
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Hola ben, spicy taco {Colors["primary"].slot_01}</Text>
+      <Text>Hola ben, spicy taco {Color["primary"].slot_01}</Text>
       <StatusBar style="auto" />
     </View>
   );
@@ -13,7 +13,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors["primary"].slot_03,
+    backgroundColor: Color["primary"].slot_03,
     alignItems: "center",
     justifyContent: "center",
   },
