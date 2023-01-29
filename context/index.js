@@ -1,5 +1,15 @@
-import { View } from "react-native";
+import React, { useState } from "react";
 
-export default function Start() {
-  return <View />;
-}
+const AppContext = React.createContext([{}, () => {}]);
+const AppProvider = (props) => {
+  const [AppState, setAppState] = useState({
+    route: "start",
+  });
+  return (
+    <AppContext.Provider value={[AppState, setAppState]}>
+      {props.children}
+    </AppContext.Provider>
+  );
+};
+
+export { AppContext, AppProvider };
