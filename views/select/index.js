@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import Link from "../component/link/link";
+import { Effect, Link } from "../../components/";
 export default function Select({ route, appState }) {
   return (
     <View>
