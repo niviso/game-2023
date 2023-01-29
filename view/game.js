@@ -6,7 +6,9 @@ export default function Game({ route, appState }) {
       <Text>
         GAME SCREEN {appState.route} ROUTE: {route}
       </Text>
-      <Link to="/">Go to start</Link>
+      <Link to="start">
+        <Text>Go to start</Text>
+      </Link>
     </View>
   );
 }

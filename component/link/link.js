@@ -1,16 +1,15 @@
-import React from "react";
-
-const Link = ({ to, children }) => {
-  const preventReload = (event) => {
-    event.preventDefault();
-    window.history.pushState({}, "", to);
-    const navigationEvent = new PopStateEvent("navigate");
-    window.dispatchEvent(navigationEvent);
+import React, { useContext } from "react";
+import { TouchableOpacity } from "react-native";
+import { AppContext } from "../../context";
+const Link = ({ to, children, style }) => {
+  const [appState, setAppState] = useContext(AppContext);
+  const loadScreen = () => {
+    setAppState({ ...appState, path: to });
   };
   return (
-    <a href={to} onClick={preventReload}>
+    <TouchableOpacity onPress={loadScreen} style={style}>
       {children}
-    </a>
+    </TouchableOpacity>
   );
 };
 
