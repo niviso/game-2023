@@ -1,12 +1,14 @@
 import { View, Text } from "react-native";
-import Link from "../component/link/link";
+import { Effect, Link } from "../../components/";
 export default function Game({ route, appState }) {
   return (
     <View>
       <Text>
         GAME SCREEN {appState.route} ROUTE: {route}
       </Text>
-      <Link to="/">Go to start</Link>
+      <Link to="start">
+        <Text>Go to start</Text>
+      </Link>
     </View>
   );
 }
