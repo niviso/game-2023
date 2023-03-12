@@ -3,8 +3,9 @@ import React, { useState } from "react";
 const AppContext = React.createContext([{}, () => {}]);
 const AppProvider = (props) => {
   const [AppState, setAppState] = useState({
-    path: "start",
+    path: "select",
   });
+
   return (
     <AppContext.Provider value={[AppState, setAppState]}>
       {props.children}

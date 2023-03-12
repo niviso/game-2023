@@ -1,12 +1,37 @@
-import { View, Text } from "react-native";
-import { Effect, Link } from "../../components/";
-export default function Select({ route, appState }) {
+import { View, Text, Pressable } from "react-native";
+import { Style, Color } from "../../constant";
+
+export default function Select({ appState, setAppState }) {
   return (
-    <View>
-      <Text>
-        Select SCREEN {appState.route} ROUTE: {route}
-      </Text>
-      <Link to="game">Go to game</Link>
+    <View style={{ width: "100%", height: "100%" }}>
+      <Pressable
+        onPress={() => setAppState({ ...appState, path: "game" })}
+        style={{
+          ...Style.flexCenter,
+          width: "100%",
+          height: "50%",
+          backgroundColor: Color["primary"].slot_03,
+        }}
+      >
+        <Text
+          style={{ fontSize: 70, transform: "rotate(90deg)", color: "white" }}
+        >
+          Versus
+        </Text>
+      </Pressable>
+      <Pressable
+        onPress={() => setAppState({ ...appState, path: "game" })}
+        style={{
+          ...Style.flexCenter,
+          width: "100%",
+          height: "50%",
+          background: "white",
+        }}
+      >
+        <Text style={{ fontSize: 70, color: Color["primary"].slot_03 }}>
+          Solo
+        </Text>
+      </Pressable>
     </View>
   );
 }
