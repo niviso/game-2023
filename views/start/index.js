@@ -3,7 +3,7 @@ import { Effect, Link } from "../../components/";
 import { Style, Color } from "../../constant";
 export default function Start({ route, appState, setAppState }) {
   return (
-    <Link to="game" style={Style.fillScreen}>
+    <Link to="select" style={Style.fillScreen}>
       <View
         style={{
           ...Style.flexCenter,

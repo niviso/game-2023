@@ -5,6 +5,7 @@ const AppProvider = (props) => {
   const [AppState, setAppState] = useState({
     path: "start",
   });
+
   return (
     <AppContext.Provider value={[AppState, setAppState]}>
       {props.children}
