@@ -1,6 +1,51 @@
 import { View, Text, TouchableOpacity, Dimensions } from "react-native";
-import { Link } from "../components";
+import { Style } from "../constant";
 import { useEffect, useState, useRef } from "react";
+
+const GameField = (props) => {
+  return (
+    <View
+      style={{
+        width: "100%",
+        height: "100%",
+        ...Style.flexCenter,
+      }}
+    >
+      <View
+        style={{
+          width: 50,
+          height: 50,
+          borderRadius: 50,
+          backgroundColor: "red",
+        }}
+      />
+      <View
+        style={{ display: "flex", flexDirection: "row", alignItems: "center" }}
+      >
+        <Text style={{ fontSize: 80, transform: [{ rotateZ: "180deg" }] }}>
+          2
+        </Text>
+        <View
+          style={{
+            width: 1,
+            height: 150,
+            backgroundColor: "black",
+            margin: 10,
+          }}
+        />
+        <Text style={{ fontSize: 80 }}>5</Text>
+      </View>
+      <View
+        style={{
+          width: 50,
+          height: 50,
+          borderRadius: 50,
+          backgroundColor: "red",
+        }}
+      />
+    </View>
+  );
+};
 
 const useAnimationFrame = (callback) => {
   // Use useRef for mutable variables that we want to persist
@@ -150,7 +195,9 @@ export default function Game({ route, appState }) {
             width: "100%",
             backgroundColor: "rgba(0,0,0,0.1)",
           }}
-        ></View>
+        >
+          <GameField />
+        </View>
 
         <View style={{ width: "100%", height: 150 }}>
           <PlayerController player="P2" />
