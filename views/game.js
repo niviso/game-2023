@@ -1,7 +1,66 @@
 import { View, Text, TouchableOpacity, Dimensions } from "react-native";
-import { Style } from "../constant";
+import { Style, Color } from "../constant";
 import { useEffect, useState, useRef } from "react";
+const randomIntFromInterval = (min, max) => {
+  // min and max included
+  return Math.floor(Math.random() * (max - min + 1) + min);
+};
+const generateColor = () => {
+  const obj = Color.primary.slots;
+  const keys = Object.keys(obj);
+  const color = keys[Math.floor(Math.random() * keys.length)];
+  return obj[color];
+};
 
+const TimeBar = (props) => {
+  return (
+    <View
+      style={{
+        position: "relative",
+        width: "100%",
+        height: 10,
+        backgroundColor: "red",
+      }}
+    >
+      <View
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "50%",
+          height: "100%",
+          backgroundColor: "orange",
+        }}
+      />
+    </View>
+  );
+};
+
+const Player = (props) => {
+  const [playerData, setPlayerData] = useState({
+    time: randomIntFromInterval(1, 5),
+    color: generateColor(),
+  });
+  useEffect(() => {
+    let intervall = setInterval(() => {
+      if (playerData.time == 0) {
+        setPlayerData({
+          ...playerData,
+          time: randomIntFromInterval(1, 5),
+          color: generateColor(),
+        });
+      } else {
+        setPlayerData({
+          ...playerData,
+          time: playerData.playerOne.time - 1,
+        });
+      }
+    }, 1000);
+    return () => {
+      clearInterval(intervall);
+    };
+  }, [playerData]);
+};
 const GameField = (props) => {
   return (
     <View
@@ -16,7 +75,7 @@ const GameField = (props) => {
           width: 50,
           height: 50,
           borderRadius: 50,
-          backgroundColor: "red",
+          backgroundColor: "red", //gameData.playerOne.color,
         }}
       />
       <View
@@ -40,35 +99,11 @@ const GameField = (props) => {
           width: 50,
           height: 50,
           borderRadius: 50,
-          backgroundColor: "red",
+          backgroundColor: "red", //gameData.playerOne.color,
         }}
       />
     </View>
   );
-};
-
-const useAnimationFrame = (callback) => {
-  // Use useRef for mutable variables that we want to persist
-  // without triggering a re-render on their change
-  const requestRef = useRef();
-  const previousTimeRef = useRef();
-  /**
-   * The callback function is automatically passed a timestamp indicating
-   * the precise time requestAnimationFrame() was called.
-   */
-
-  useEffect(() => {
-    const animate = (time) => {
-      if (previousTimeRef.current !== undefined) {
-        const deltaTime = time - previousTimeRef.current;
-        callback(deltaTime);
-      }
-      previousTimeRef.current = time;
-      requestRef.current = requestAnimationFrame(animate);
-    };
-    requestRef.current = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(requestRef.current);
-  }, []); // Make sure the effect runs only once
 };
 
 const PlayerController = (props) => {
@@ -96,34 +131,28 @@ const PlayerController = (props) => {
           padding: 10,
         }}
       >
-        <Color _onClick={onClick} />
-        <Color _onClick={onClick} />
-        <Color _onClick={onClick} />
-        <Color _onClick={onClick} />
+        <ColorPad _onClick={onClick} />
+        <ColorPad _onClick={onClick} />
+        <ColorPad _onClick={onClick} />
+        <ColorPad _onClick={onClick} />
       </View>
+
       <View style={{ width: "100%", height: 20, backgroundColor: "black" }} />
+      <TimeBar />
     </View>
   );
 };
 
-const Color = (props) => {
+const ColorPad = (props) => {
   const { _onClick } = props;
-  const generateColor = () => {
-    return Math.floor(Math.random() * 16777215).toString(16);
-  };
 
-  const randomIntFromInterval = (min, max) => {
-    // min and max included
-    return Math.floor(Math.random() * (max - min + 1) + min);
-  };
   const [color, setColor] = useState(generateColor());
-  const [time, setTime] = useState(randomIntFromInterval(1, 10));
+  const [time, setTime] = useState(randomIntFromInterval(1, 5));
   useEffect(() => {
     let intervall = setInterval(() => {
       if (time == 0) {
-        console.log("UPDATE");
         setColor(generateColor());
-        setTime(randomIntFromInterval(1, 10));
+        setTime(randomIntFromInterval(1, 5));
       } else {
         setTime((prevTime) => prevTime - 1);
       }
@@ -135,7 +164,7 @@ const Color = (props) => {
 
   const update = () => {
     setColor(generateColor());
-    setTime(randomIntFromInterval(1, 10));
+    setTime(randomIntFromInterval(1, 5));
     _onClick();
   };
   return (
@@ -145,7 +174,7 @@ const Color = (props) => {
         style={{
           width: Dimensions.get("window").width * 0.2,
           height: Dimensions.get("window").width * 0.2,
-          backgroundColor: "#" + color,
+          backgroundColor: color,
           borderRadius: 10,
         }}
       />
@@ -154,30 +183,8 @@ const Color = (props) => {
 };
 
 export default function Game({ route, appState }) {
-  const [deltaTime, setDeltaTime] = useState(0);
-  const [time, setTime] = useState(0);
-
-  useAnimationFrame((deltaTime) => {
-    setTime((prevTime) => prevTime + Math.round(deltaTime));
-    setDeltaTime(Math.round(deltaTime));
-  });
-
   return (
     <View style={{ width: "100%", height: "100%" }}>
-      <View
-        style={{
-          position: "fixed",
-          background: "lightgrey",
-          bottom: 0,
-          right: 0,
-          width: 200,
-          height: 200,
-          display: "none",
-        }}
-      >
-        <Text style={{ fontSize: 30, color: "red" }}>FPS: {deltaTime}</Text>
-        <Text style={{ fontSize: 30, color: "red" }}>time: {time / 1000}</Text>
-      </View>
       <View
         style={{
           width: "100%",
@@ -189,16 +196,15 @@ export default function Game({ route, appState }) {
         <View style={{ width: "100%", height: 150 }}>
           <PlayerController player="P1" />
         </View>
+
         <View
           style={{
             height: Dimensions.get("window").height - 300,
             width: "100%",
-            backgroundColor: "rgba(0,0,0,0.1)",
           }}
         >
           <GameField />
         </View>
-
         <View style={{ width: "100%", height: 150 }}>
           <PlayerController player="P2" />
         </View>
