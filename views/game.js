@@ -13,6 +13,8 @@ const generateColor = () => {
 };
 
 const TimeBar = (props) => {
+  const {time} = props;
+
   return (
     <View
       style={{
