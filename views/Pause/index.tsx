@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import { Effect, Link } from "../../components/";
+import { Effect, Link } from "../../components";
 export default function Pause({ route, appState }) {
   return (
     <View>

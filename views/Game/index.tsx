@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, Dimensions } from "react-native";
-import { Style, Color } from "../constant";
+import { Style, Color } from "@/constants";
 import { useEffect, useState, useRef } from "react";
 const randomIntFromInterval = (min, max) => {
   // min and max included
@@ -13,7 +13,7 @@ const generateColor = () => {
 };
 
 const TimeBar = (props) => {
-  const {time} = props;
+  const { time } = props;
 
   return (
     <View

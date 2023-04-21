@@ -3,7 +3,7 @@ import React, { useState } from "react";
 const AppContext = React.createContext([{}, () => {}]);
 const AppProvider = (props) => {
   const [AppState, setAppState] = useState({
-    path: "game",
+    path: "start",
   });
 
   return (

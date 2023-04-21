@@ -1,5 +1,5 @@
 import { View, Text, Pressable } from "react-native";
-import { Style, Color } from "../../constant";
+import { Style, Color } from "../../constants";
 
 export default function Select({ appState, setAppState }) {
   return (

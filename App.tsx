@@ -1,8 +1,8 @@
 import { StatusBar } from "expo-status-bar";
-import { AppProvider } from "./context";
+import { AppProvider } from "./contexts";
 import { Route } from "./components";
-import { Start, Select, Game, Score, Credits, Settings } from "./views";
-import Pause from "./views/pause";
+import { Start, Select, Game, Score, Credits, Settings } from "@/views";
+import Pause from "./views/Pause";
 
 export default function App() {
   return (
