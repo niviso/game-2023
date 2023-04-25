@@ -22,7 +22,7 @@ const TimeBar = (props) => {
         width: "100%",
         height: 10,
         backgroundColor: "red",
-      }}
+      }}  
     >
       <View
         style={{
@@ -74,8 +74,8 @@ const GameField = (props) => {
     >
       <View
         style={{
-          width: 50,
-          height: 50,
+          width: 0,
+          height: 0,
           borderRadius: 50,
           backgroundColor: "red", //gameData.playerOne.color,
         }}
@@ -98,8 +98,8 @@ const GameField = (props) => {
       </View>
       <View
         style={{
-          width: 50,
-          height: 50,
+          width: 0,
+          height: 0,
           borderRadius: 50,
           backgroundColor: "red", //gameData.playerOne.color,
         }}
@@ -110,15 +110,43 @@ const GameField = (props) => {
 
 const PlayerController = (props) => {
   const { player } = props;
-  const onClick = () => {
-    console.log("CLICK", player);
+  const [points,setPoints] = useState<number>(0)
+  const [playerData, setPlayerData] = useState<any>({
+    time: randomIntFromInterval(1, 5),
+    color: generateColor(),
+  });
+  const onClick = (color:string) => {
+    console.log(color,playerData.color);
+    if(color == playerData.color){
+      setPoints(points+1);
+    }
   };
+
+  useEffect(() => {
+    let intervall = setInterval(() => {
+      if (playerData.time == 0) {
+        setPlayerData({
+          ...playerData,
+          time: randomIntFromInterval(1, 5),
+          color: generateColor(),
+        });
+      } else {
+        setPlayerData({
+          ...playerData,
+          time: playerData.time - 1,
+        });
+      }
+    }, 1000);
+    return () => {
+      clearInterval(intervall);
+    };
+  }, [playerData]);
   return (
     <View
       style={{
         display: "flex",
         height: "100%",
-        widht: "100%",
+        width: "100%",
         flexDirection: player == "P1" ? "column" : "column-reverse",
       }}
     >
@@ -128,7 +156,7 @@ const PlayerController = (props) => {
           flexDirection: "row",
           width: "100%",
           height: "100%",
-          alignItems: player == "P1" ? "flex-end" : "flex-start",
+          alignItems: player == "P1" ? "flex-start" : "flex-end",
           justifyContent: "space-between",
           padding: 10,
         }}
@@ -137,10 +165,24 @@ const PlayerController = (props) => {
         <ColorPad _onClick={onClick} />
         <ColorPad _onClick={onClick} />
         <ColorPad _onClick={onClick} />
+        
       </View>
+      <View style={{ display:"none",width: "100%", height: 20, backgroundColor: "black" }} />
 
-      <View style={{ width: "100%", height: 20, backgroundColor: "black" }} />
-      <TimeBar />
+
+      <View style={{display: "flex",flexDirection: player == "P1" ? "column" : "column-reverse",alignItems:"center",justifyContent: player == "P1" ? "flex-end" : "flex-start"}}>
+      <View style={{transform: player == "P1" ? "rotate(0deg)" : "rotate(180deg)"}}>
+        
+        <View style={{display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"row"}}>
+        <Text style={{width:80,fontSize: 60,marginTop: -100}}>{points}</Text>
+        <View style={{width: 1,height:100,backgroundColor: "black"}}/>
+        <Text style={{width:80,fontSize: 50}}></Text>
+
+        </View>
+        </View>
+        <View style={{width: 70,height: 70,borderRadius: 50,backgroundColor:playerData.color,display: "flex",alignItems:"center",justifyContent: player == "P1" ? "flex-end" : "flex-start"}}>
+      </View>
+      </View>
     </View>
   );
 };
@@ -167,7 +209,7 @@ const ColorPad = (props) => {
   const update = () => {
     setColor(generateColor());
     setTime(randomIntFromInterval(1, 5));
-    _onClick();
+    _onClick(color);
   };
   return (
     <>
@@ -185,6 +227,7 @@ const ColorPad = (props) => {
 };
 
 export default function Game({ route, appState }) {
+  const [activeColor,setActiveColor] = useState<string>("");
   return (
     <View style={{ width: "100%", height: "100%" }}>
       <View
@@ -193,21 +236,13 @@ export default function Game({ route, appState }) {
           height: "100%",
           display: "flex",
           flexDirection: "column",
+          justifyContent:"space-between"
         }}
       >
-        <View style={{ width: "100%", height: 150 }}>
+        <View style={{ width: "100%", height: "50%" }}>
           <PlayerController player="P1" />
         </View>
-
-        <View
-          style={{
-            height: Dimensions.get("window").height - 300,
-            width: "100%",
-          }}
-        >
-          <GameField />
-        </View>
-        <View style={{ width: "100%", height: 150 }}>
+        <View style={{ width: "100%", height: "50%" }}>
           <PlayerController player="P2" />
         </View>
       </View>
