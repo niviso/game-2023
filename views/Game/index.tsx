@@ -20,14 +20,14 @@ const PrecentageBar = ({value,color}:any) => {
 }
 
 const PlayerController = (props) => {
-  const { player } = props;
+  const { player,appState } = props;
   const [points,setPoints] = useState<number>(0);
   const [powerMeter,setPowerMeter] = useState<number>(0);
   const [time,setTime] = useState<number>(randomIntFromInterval(2, 10));
   const [color,setColor] = useState<string>(generateColor());
 
 
-  const onClick = (clickColor:string): void => {
+  const onClick = (clickColor:string)=> {
     if(clickColor === color) {
       setPoints((prevPoints) => (prevPoints + 1));
       setPowerMeter((prevPowerMeter) => (prevPowerMeter + 5));
@@ -37,7 +37,7 @@ const PlayerController = (props) => {
   };
 
   useEffect(() => {
-    let intervall:any = setInterval((): void => {
+    let intervall = setInterval(()=> {
       if (time == 0) {
         setColor(generateColor());
         setTime(randomIntFromInterval(1, 5));
@@ -71,10 +71,10 @@ const PlayerController = (props) => {
           padding: 10,
         }}
       >
-        <ColorPad _onClick={onClick} />
-        <ColorPad _onClick={onClick} />
-        <ColorPad _onClick={onClick} />
-        <ColorPad _onClick={onClick} />
+        <ColorPad active={appState.gameActive} _onClick={onClick} />
+        <ColorPad active={appState.gameActive} _onClick={onClick} />
+        <ColorPad active={appState.gameActive} _onClick={onClick} />
+        <ColorPad active={appState.gameActive} _onClick={onClick} />
         
       </View>
       <PrecentageBar value={powerMeter} color={color}/>
@@ -99,7 +99,7 @@ const PlayerController = (props) => {
 };
 
 const ColorPad = (props) => {
-  const { _onClick } = props;
+  const { _onClick, active } = props;
 
   const [color, setColor] = useState(generateColor());
   const [time, setTime] = useState(randomIntFromInterval(1, 5));
@@ -118,6 +118,9 @@ const ColorPad = (props) => {
   }, [time]);
 
   const onPress = ():void => {
+    if(!active){
+      return;
+    }
     setColor(generateColor());
     setTime(randomIntFromInterval(1, 5));
     _onClick(color);
@@ -137,14 +140,16 @@ const ColorPad = (props) => {
   );
 };
 
-export default function Game({ route, appState }) {
-  const [gameTime,setGameTime] = useState<number>(120);
-  const [gameActive,setGameActive] = useState<boolean>(false);
+export default function Game(props) {
+  const { appState,setAppState } = props;
+  const [gameTime,setGameTime] = useState<number>(5);
   const [countDown,setCountDown] = useState<number>(3);
+  const [active,setActive] = useState(false);
+  const [paused,setPaused] = useState(false);
   useEffect(() => {
-    let intervall:any = setInterval((): void => {
+    let intervall = setInterval(()=> {
       if (gameTime == 0) {
-        setGameTime(randomIntFromInterval(1, 5));
+        setAppState({...appState,path: "score"})
       } else {
         setGameTime(gameTime - 1);
       }
@@ -155,10 +160,9 @@ export default function Game({ route, appState }) {
   }, [gameTime]);
 
   useEffect(() => {
-    console.log("hej");
-    let intervall:any = setInterval((): void => {
+    let intervall = setInterval(()=> {
       if (countDown == 0) {
-        setGameActive(true);
+        setActive(true);
       } else {
         setCountDown(countDown - 1);
       }
@@ -179,14 +183,18 @@ export default function Game({ route, appState }) {
           justifyContent:"space-between"
         }}
       >
+      <View style={{position: "absolute",zIndex: -1,width:"100%",height:"100%",display: "flex",alignItems:"center",justifyContent:"center",transform: "rotate(90deg)"}}>
+          <Text style={{fontSize: 170,color: "black",opacity: 0.1}}>{gameTime}</Text>
+      </View>
+
         <View style={{ width: "100%", height: "50%" }}>
-          <PlayerController player="P1" />
+          <PlayerController {...props} player="P1" />
         </View>
         <View style={{width: "100%", height: "50%" }}>
-          <PlayerController player="P2" />
+          <PlayerController {...props} player="P2" />
         </View>
       </View>
-      {!gameActive && (
+      {!active && (
       <View style={{position: "absolute",width:"100%",height:"100%",display: "flex",alignItems:"center",justifyContent:"center"}}>
         <View style={{width: 400,height:400,backgroundColor:"black",borderRadius: 400,opacity: 0.9,display: "flex",alignItems:"center",justifyContent:"center"}}>
           <Text style={{fontSize: 200,color: "white"}}>{countDown}</Text>

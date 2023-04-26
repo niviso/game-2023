@@ -5,8 +5,8 @@ export default function Score({ route, appState }) {
     <View>
       <Text>
         Score SCREEN {appState.route} ROUTE: {route}
+        ACTIVE ? {JSON.stringify(appState)}
       </Text>
-      <Link to="game">Go to game</Link>
     </View>
   );
 }
