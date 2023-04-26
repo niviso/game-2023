@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, Dimensions } from "react-native";
-import { Style, Color } from "@/constants";
-import { useEffect, useState, useRef } from "react";
+import { Color } from "@/constants";
+import { useEffect, useState } from "react";
 const randomIntFromInterval = (min:number, max:number):number => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
@@ -10,6 +10,14 @@ const generateColor = ():string => {
   const color = keys[Math.floor(Math.random() * keys.length)];
   return obj[color];
 };
+
+const PrecentageBar = ({value}:any) => {
+  return (
+    <View style={{position: "relative",width: "100%",height: 20,backgroundColor:"black"}}>
+      <View style={{position:"absolute",width: 20,height:20,backgroundColor: "red"}}/>
+    </View>
+  )
+}
 
 const PlayerController = (props) => {
   const { player } = props;
@@ -22,6 +30,7 @@ const PlayerController = (props) => {
   const onClick = (clickColor:string): void => {
     if(clickColor === color) {
       setPoints((prevPoints) => (prevPoints + 1));
+      setPowerMeter((prevPowerMeter) => (prevPowerMeter + 1));
     } else if(points > 0) {
       setPoints((prevPoints) => (prevPoints - 1))
     }
@@ -68,8 +77,8 @@ const PlayerController = (props) => {
         <ColorPad _onClick={onClick} />
         
       </View>
+      <PrecentageBar/>
       <View style={{ display:"none",width: "100%", height: 20, backgroundColor: "black" }} />
-
 
       <View style={{display: "flex",flexDirection: player == "P1" ? "column-reverse" : "column",alignItems:"center",justifyContent: player == "P1" ? "flex-end" : "flex-start"}}>
       <View style={{transform: player == "P1" ? "rotate(180deg)" : "rotate(0deg)"}}>

@@ -1,8 +1,7 @@
-import { StatusBar } from "expo-status-bar";
 import { AppProvider } from "./contexts";
+import { StatusBar } from "expo-status-bar";
 import { Route } from "./components";
 import { Start, Select, Game, Score, Credits, Settings } from "@/views";
-import Pause from "./views/Pause";
 
 export default function App() {
   return (
@@ -14,7 +13,6 @@ export default function App() {
       <Route path="score" component={Score} />
       <Route path="credits" component={Credits} />
       <Route path="settings" component={Settings} />
-      <Route path="pause" component={Pause} />
     </AppProvider>
   );
 }
