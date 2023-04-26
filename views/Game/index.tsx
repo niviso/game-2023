@@ -11,10 +11,10 @@ const generateColor = ():string => {
   return obj[color];
 };
 
-const PrecentageBar = ({value}:any) => {
+const PrecentageBar = ({value,color}:any) => {
   return (
     <View style={{position: "relative",width: "100%",height: 20,backgroundColor:"black"}}>
-      <View style={{position:"absolute",width: 20,height:20,backgroundColor: "red"}}/>
+      <View style={{position:"absolute",width: value.toString()+"%",height:20,backgroundColor: color}}/>
     </View>
   )
 }
@@ -30,7 +30,7 @@ const PlayerController = (props) => {
   const onClick = (clickColor:string): void => {
     if(clickColor === color) {
       setPoints((prevPoints) => (prevPoints + 1));
-      setPowerMeter((prevPowerMeter) => (prevPowerMeter + 1));
+      setPowerMeter((prevPowerMeter) => (prevPowerMeter + 5));
     } else if(points > 0) {
       setPoints((prevPoints) => (prevPoints - 1))
     }
@@ -77,7 +77,7 @@ const PlayerController = (props) => {
         <ColorPad _onClick={onClick} />
         
       </View>
-      <PrecentageBar/>
+      <PrecentageBar value={powerMeter} color={color}/>
       <View style={{ display:"none",width: "100%", height: 20, backgroundColor: "black" }} />
 
       <View style={{display: "flex",flexDirection: player == "P1" ? "column-reverse" : "column",alignItems:"center",justifyContent: player == "P1" ? "flex-end" : "flex-start"}}>
@@ -138,6 +138,36 @@ const ColorPad = (props) => {
 };
 
 export default function Game({ route, appState }) {
+  const [gameTime,setGameTime] = useState<number>(120);
+  const [gameActive,setGameActive] = useState<boolean>(false);
+  const [countDown,setCountDown] = useState<number>(3);
+  useEffect(() => {
+    let intervall:any = setInterval((): void => {
+      if (gameTime == 0) {
+        setGameTime(randomIntFromInterval(1, 5));
+      } else {
+        setGameTime(gameTime - 1);
+      }
+    }, 1000);
+    return () => {
+      clearInterval(intervall);
+    };
+  }, [gameTime]);
+
+  useEffect(() => {
+    console.log("hej");
+    let intervall:any = setInterval((): void => {
+      if (countDown == 0) {
+        setGameActive(true);
+      } else {
+        setCountDown(countDown - 1);
+      }
+    }, 1000);
+    return () => {
+      clearInterval(intervall);
+    };
+  }, [countDown]);
+
   return (
     <View style={{ width: "100%", height: "100%" }}>
       <View
@@ -156,6 +186,13 @@ export default function Game({ route, appState }) {
           <PlayerController player="P2" />
         </View>
       </View>
+      {!gameActive && (
+      <View style={{position: "absolute",width:"100%",height:"100%",display: "flex",alignItems:"center",justifyContent:"center"}}>
+        <View style={{width: 400,height:400,backgroundColor:"black",borderRadius: 400,opacity: 0.9,display: "flex",alignItems:"center",justifyContent:"center"}}>
+          <Text style={{fontSize: 200,color: "white"}}>{countDown}</Text>
+        </View>
+      </View>
+      )}
     </View>
   );
 }
