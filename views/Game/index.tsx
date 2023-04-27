@@ -1,6 +1,7 @@
-import { View, Text, TouchableOpacity, Dimensions } from "react-native";
-import { Color } from "@/constants";
+import { View, Text, TouchableOpacity, Dimensions,SafeAreaView } from "react-native";
+import { Color } from "../../constants";
 import { useEffect, useState } from "react";
+import { Audio } from 'expo-av';
 const randomIntFromInterval = (min:number, max:number):number => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
@@ -20,7 +21,7 @@ const PrecentageBar = ({value,color}:any) => {
 }
 
 const PlayerController = (props) => {
-  const { player,appState } = props;
+  const { player,active } = props;
   const [points,setPoints] = useState<number>(0);
   const [powerMeter,setPowerMeter] = useState<number>(0);
   const [time,setTime] = useState<number>(randomIntFromInterval(2, 10));
@@ -71,17 +72,17 @@ const PlayerController = (props) => {
           padding: 10,
         }}
       >
-        <ColorPad active={appState.gameActive} _onClick={onClick} />
-        <ColorPad active={appState.gameActive} _onClick={onClick} />
-        <ColorPad active={appState.gameActive} _onClick={onClick} />
-        <ColorPad active={appState.gameActive} _onClick={onClick} />
+        <ColorPad active={active} _onClick={onClick} />
+        <ColorPad active={active} _onClick={onClick} />
+        <ColorPad active={active} _onClick={onClick} />
+        <ColorPad active={active} _onClick={onClick} />
         
       </View>
       <PrecentageBar value={powerMeter} color={color}/>
       <View style={{ display:"none",width: "100%", height: 20, backgroundColor: "black" }} />
 
       <View style={{display: "flex",flexDirection: player == "P1" ? "column-reverse" : "column",alignItems:"center",justifyContent: player == "P1" ? "flex-end" : "flex-start"}}>
-      <View style={{transform: player == "P1" ? "rotate(180deg)" : "rotate(0deg)"}}>
+      <View style={{transform: [ {rotate: player == "P1" ? '180deg' : '0deg'}]}}>
         
         <View style={{display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"row"}}>
         <Text style={{width:80,fontSize: 60,marginTop: -100,textAlign: "left"}}>{points}</Text>
@@ -142,10 +143,33 @@ const ColorPad = (props) => {
 
 export default function Game(props) {
   const { appState,setAppState } = props;
-  const [gameTime,setGameTime] = useState<number>(5);
+  const [gameTime,setGameTime] = useState<number>(120);
   const [countDown,setCountDown] = useState<number>(3);
   const [active,setActive] = useState(false);
   const [paused,setPaused] = useState(false);
+  const [sound, setSound] = useState();
+
+  async function playSound() {
+    console.log('Loading Sound');
+    const { sound } = await Audio.Sound.createAsync( require('./bgm.mp3'));
+    setSound(sound);
+
+    console.log('Playing Sound');
+    await sound.playAsync();
+  }
+
+  useEffect(() => {
+    return sound
+      ? () => {
+          console.log('Unloading Sound');
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
+
+  useEffect(() => {
+    playSound();
+  },[]);
   useEffect(() => {
     let intervall = setInterval(()=> {
       if (gameTime == 0) {
@@ -173,7 +197,8 @@ export default function Game(props) {
   }, [countDown]);
 
   return (
-    <View style={{ width: "100%", height: "100%" }}>
+    <>
+    <SafeAreaView style={{ width: "100%", height: "100%" }}>
       <View
         style={{
           width: "100%",
@@ -183,24 +208,25 @@ export default function Game(props) {
           justifyContent:"space-between"
         }}
       >
-      <View style={{position: "absolute",zIndex: -1,width:"100%",height:"100%",display: "flex",alignItems:"center",justifyContent:"center",transform: "rotate(90deg)"}}>
+      <View style={{position: "absolute",zIndex: -1,width:"100%",height:"100%",display: "flex",alignItems:"center",justifyContent:"center",transform: [{rotate:'90deg'}]}}>
           <Text style={{fontSize: 170,color: "black",opacity: 0.1}}>{gameTime}</Text>
       </View>
 
         <View style={{ width: "100%", height: "50%" }}>
-          <PlayerController {...props} player="P1" />
+          <PlayerController active={active} player="P1" />
         </View>
         <View style={{width: "100%", height: "50%" }}>
-          <PlayerController {...props} player="P2" />
+          <PlayerController active={active} player="P2" />
         </View>
       </View>
-      {!active && (
+    </SafeAreaView>
+    {!active && (
       <View style={{position: "absolute",width:"100%",height:"100%",display: "flex",alignItems:"center",justifyContent:"center"}}>
-        <View style={{width: 400,height:400,backgroundColor:"black",borderRadius: 400,opacity: 0.9,display: "flex",alignItems:"center",justifyContent:"center"}}>
+        <View style={{width: 350,height:350,backgroundColor:"black",borderRadius: 350,opacity: 0.9,display: "flex",alignItems:"center",justifyContent:"center"}}>
           <Text style={{fontSize: 200,color: "white"}}>{countDown}</Text>
         </View>
       </View>
       )}
-    </View>
+    </>
   );
 }
