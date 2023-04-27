@@ -159,6 +159,7 @@ export default function Game(props) {
   }
 
   useEffect(() => {
+
     return sound
       ? () => {
           console.log('Unloading Sound');
@@ -222,7 +223,7 @@ export default function Game(props) {
     </SafeAreaView>
     {!active && (
       <View style={{position: "absolute",width:"100%",height:"100%",display: "flex",alignItems:"center",justifyContent:"center"}}>
-        <View style={{width: 350,height:350,backgroundColor:"black",borderRadius: 350,opacity: 0.9,display: "flex",alignItems:"center",justifyContent:"center"}}>
+        <View style={{width: Dimensions.get("window").width * 0.9,height:Dimensions.get("window").width * 0.9,backgroundColor:"black",borderRadius: Dimensions.get("window").width * 0.9,display: "flex",alignItems:"center",justifyContent:"center"}}>
           <Text style={{fontSize: 200,color: "white"}}>{countDown}</Text>
         </View>
       </View>
