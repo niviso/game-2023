@@ -1,7 +1,9 @@
 import { View, Text, TouchableOpacity, Dimensions,SafeAreaView } from "react-native";
 import { Color } from "../../constants";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Audio } from 'expo-av';
+import AudioHelper from "../../helpers/AudioHelper";
+import * as Animatable from 'react-native-animatable';
 const randomIntFromInterval = (min:number, max:number):number => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
@@ -72,10 +74,10 @@ const PlayerController = (props) => {
           padding: 10,
         }}
       >
-        <ColorPad active={active} _onClick={onClick} />
-        <ColorPad active={active} _onClick={onClick} />
-        <ColorPad active={active} _onClick={onClick} />
-        <ColorPad active={active} _onClick={onClick} />
+        <ColorPad player={player} active={active} _onClick={onClick} />
+        <ColorPad player={player} active={active} _onClick={onClick} />
+        <ColorPad player={player} active={active} _onClick={onClick} />
+        <ColorPad player={player} active={active} _onClick={onClick} />
         
       </View>
       <PrecentageBar value={powerMeter} color={color}/>
@@ -92,23 +94,29 @@ const PlayerController = (props) => {
 
         </View>
         </View>
-        <View style={{width: 70,height: 70,borderRadius: 50,backgroundColor:color,display: "flex",alignItems:"center",justifyContent: player == "P1" ? "flex-end" : "flex-start"}}>
-      </View>
+        <Animatable.View animation="pulse" iterationCount="infinite" style={{width: 70,height: 70,borderRadius: 50,backgroundColor:color,display: "flex",alignItems:"center",justifyContent: player == "P1" ? "flex-end" : "flex-start"}}/>
       </View>
     </View>
   );
 };
 
 const ColorPad = (props) => {
-  const { _onClick, active } = props;
+  const { _onClick, active, player } = props;
 
   const [color, setColor] = useState(generateColor());
-  const [time, setTime] = useState(randomIntFromInterval(1, 5));
+  const [time, setTime] = useState(randomIntFromInterval(1, 3));
+  const animatableRef = useRef<Animatable.View & View>(null);  const updateColor = () => {
+    const newColor = generateColor();
+    if(newColor === color) {
+      updateColor();
+    }
+    setColor(newColor);
+  }
   useEffect(() => {
     let intervall = setInterval(() => {
       if (time == 0) {
-        setColor(generateColor());
-        setTime(randomIntFromInterval(1, 5));
+        updateColor();
+        setTime(randomIntFromInterval(1, 3));
       } else {
         setTime((prevTime) => prevTime - 1);
       }
@@ -122,12 +130,13 @@ const ColorPad = (props) => {
     if(!active){
       return;
     }
+    console.log(animatableRef.current.pulse());
     setColor(generateColor());
     setTime(randomIntFromInterval(1, 5));
     _onClick(color);
   };
   return (
-    <>
+    <Animatable.View  ref={animatableRef}>
       <TouchableOpacity
         onPress={onPress}
         style={{
@@ -135,9 +144,14 @@ const ColorPad = (props) => {
           height: Dimensions.get("window").width * 0.2,
           backgroundColor: color,
           borderRadius: 10,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
         }}
-      />
-    </>
+      >
+        <Text style={{display:"none",fontSize: 32,fontWeight: "bold", transform: [{rotate: player == "P1" ? "180deg" : "0deg"}], color: "white"}}>{time}</Text>
+        </TouchableOpacity>
+    </Animatable.View>
   );
 };
 
@@ -223,9 +237,9 @@ export default function Game(props) {
     </SafeAreaView>
     {!active && (
       <View style={{position: "absolute",width:"100%",height:"100%",display: "flex",alignItems:"center",justifyContent:"center"}}>
-        <View style={{width: Dimensions.get("window").width * 0.9,height:Dimensions.get("window").width * 0.9,backgroundColor:"black",borderRadius: Dimensions.get("window").width * 0.9,display: "flex",alignItems:"center",justifyContent:"center"}}>
-          <Text style={{fontSize: 200,color: "white"}}>{countDown}</Text>
-        </View>
+        <Animatable.View animation="flipInX" iterationCount={1} style={{width: Dimensions.get("window").width * 0.9,height:Dimensions.get("window").width * 0.9,backgroundColor:"black",borderRadius: Dimensions.get("window").width * 0.9,display: "flex",alignItems:"center",justifyContent:"center"}}>
+          <Animatable.Text animation="flipOutY" direction="reverse" delay={100} style={{fontSize: 200,color: "white"}}>{countDown}</Animatable.Text>
+        </Animatable.View>
       </View>
       )}
     </>
