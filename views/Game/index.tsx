@@ -16,8 +16,8 @@ const generateColor = ():string => {
 
 const PrecentageBar = ({value,color}:any) => {
   return (
-    <View style={{position: "relative",width: "100%",height: 20,backgroundColor:"black"}}>
-      <View style={{position:"absolute",width: value.toString()+"%",height:20,backgroundColor: color}}/>
+    <View style={{position: "relative",width: "100%",height: 30,backgroundColor:"black"}}>
+      <View style={{position:"absolute",width: value.toString()+"%",height:30,backgroundColor: color}}/>
     </View>
   )
 }
@@ -81,15 +81,14 @@ const PlayerController = (props) => {
         
       </View>
       <PrecentageBar value={powerMeter} color={color}/>
-      <View style={{ display:"none",width: "100%", height: 20, backgroundColor: "black" }} />
 
       <View style={{display: "flex",flexDirection: player == "P1" ? "column-reverse" : "column",alignItems:"center",justifyContent: player == "P1" ? "flex-end" : "flex-start"}}>
       <View style={{transform: [ {rotate: player == "P1" ? '180deg' : '0deg'}]}}>
         
         <View style={{display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"row"}}>
-        <Text style={{width:80,fontSize: 60,marginTop: -100,textAlign: "left"}}>{points}</Text>
-        <View style={{width: 1,height:100,backgroundColor: "black"}}/>
-        <Text style={{width:80,fontSize: 14}}></Text>
+        <Text style={{width:100,fontSize: 60,marginTop: -100,textAlign: "left"}}>{points}</Text>
+        <View style={{width: 1,height:200,backgroundColor: "black"}}/>
+        <Text style={{width:100,fontSize: 14}}></Text>
         
 
         </View>
@@ -130,7 +129,7 @@ const ColorPad = (props) => {
     if(!active){
       return;
     }
-    console.log(animatableRef.current.pulse());
+    animatableRef.current.pulse();
     setColor(generateColor());
     setTime(randomIntFromInterval(1, 5));
     _onClick(color);
@@ -162,6 +161,7 @@ export default function Game(props) {
   const [active,setActive] = useState(false);
   const [paused,setPaused] = useState(false);
   const [sound, setSound] = useState();
+  const countDownRef =  useRef<Animatable.View & View>(null);
 
   async function playSound() {
     console.log('Loading Sound');
@@ -201,7 +201,10 @@ export default function Game(props) {
   useEffect(() => {
     let intervall = setInterval(()=> {
       if (countDown == 0) {
-        setActive(true);
+        countDownRef.current && countDownRef.current.flipOutY();
+        setTimeout(() => {
+          setActive(true);
+        },1000);
       } else {
         setCountDown(countDown - 1);
       }
@@ -211,6 +214,14 @@ export default function Game(props) {
     };
   }, [countDown]);
 
+  const flip = {
+    0: {
+      transform: [{rotateZ: "0deg"}],
+    },
+    1: {
+      transform: [{rotateZ: "360deg"}],
+    },
+  };
   return (
     <>
     <SafeAreaView style={{ width: "100%", height: "100%" }}>
@@ -235,13 +246,11 @@ export default function Game(props) {
         </View>
       </View>
     </SafeAreaView>
-    {!active && (
-      <View style={{position: "absolute",width:"100%",height:"100%",display: "flex",alignItems:"center",justifyContent:"center"}}>
-        <Animatable.View animation="flipInX" iterationCount={1} style={{width: Dimensions.get("window").width * 0.9,height:Dimensions.get("window").width * 0.9,backgroundColor:"black",borderRadius: Dimensions.get("window").width * 0.9,display: "flex",alignItems:"center",justifyContent:"center"}}>
-          <Animatable.Text animation="flipOutY" direction="reverse" delay={100} style={{fontSize: 200,color: "white"}}>{countDown}</Animatable.Text>
+      <View style={{display: !active ? "flex" : "none",position: "absolute",width:"100%",height:"100%",alignItems:"center",justifyContent:"center"}}>
+        <Animatable.View ref={countDownRef} animation="flipInX" iterationCount={1} style={{width: Dimensions.get("window").width * 0.9,height:Dimensions.get("window").width * 0.9,backgroundColor:"black",borderRadius: Dimensions.get("window").width * 0.9,display: "flex",alignItems:"center",justifyContent:"center"}}>
+          <Animatable.Text animation={flip} duration={1000} iterationCount={4} style={{fontSize: 300,color: "white"}}>{countDown}</Animatable.Text>
         </Animatable.View>
       </View>
-      )}
     </>
   );
 }
