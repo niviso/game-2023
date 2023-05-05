@@ -23,7 +23,7 @@ const CountDown = ({active,countDownRef, countDown}) => {
   )
 }
 
-const PrecentageBar = ({value,color}:any) => {
+const PrecentageBar = ({value,color,onPressStop}:any) => {
   const animatableRef = useRef<Animatable.View & View>(null);
   const prevColor = usePrevious(color);
   const prevValue = usePrevious(value);
@@ -39,13 +39,15 @@ const PrecentageBar = ({value,color}:any) => {
 
   return (
     <View style={{width: Screen.Width, display: "flex",alignItems: "center"}}>
-    { value !== 100 ? (
+    { value === 100 ? (
       
     <Animatable.View duration={250} ref={animatableRef} style={styles.wrapper}/>
     ) : (
+    <TouchableOpacity onPress={onPressStop}>
     <Animatable.View duration={500} animation="flipInX" style={{display: "flex",justifyContent:"center",alignItems:"center",width: Screen.Width * 0.5,height: Screen.Height * 0.1,backgroundColor: color, borderRadius: 10}}>
       <Animatable.Text duration={1000} animation="pulse" iterationCount="infinite" style={{color:"white",fontSize: 50}}>STOP</Animatable.Text>
     </Animatable.View>
+    </TouchableOpacity>
     )}
     </View>
   )
@@ -59,7 +61,11 @@ const PlayerController = (props) => {
   const [color,setColor] = useState<string>(generateColor());
 
 
-  const onClick = (clickColor:string)=> {
+  const onClick = (clickColor:string,player:string)=> {
+    if(gameState.blocked === player){
+      setPowerMeter(0);
+      setPoints(0);
+    }
     if(clickColor === color) {
       setPoints((prevPoints) => (prevPoints + 1));
       if(powerMeter < 100){
@@ -102,6 +108,10 @@ const PlayerController = (props) => {
     }
   });
 
+  const blockPlayer = () => {
+    setGameState({...gameState,blocked: player === Player.One ? Player.Two : Player.One})
+  }
+
   return (
     <View style={styles.wrapper}>
 
@@ -114,7 +124,7 @@ const PlayerController = (props) => {
         <ColorPad gameState={gameState} player={player} active={active} _onClick={onClick} />
         
       </View>
-      <PrecentageBar value={powerMeter} color={color}/>
+      <PrecentageBar onPressStop={blockPlayer} value={powerMeter} color={color}/>
 
       <View style={{display: "flex",flexDirection: player == Player.One ? "column-reverse" : "column",alignItems:"center",justifyContent: player == Player.One ? "flex-end" : "flex-start"}}>
       <View style={{transform: [ {rotate: player == Player.One ? '180deg' : '0deg'}]}}>
@@ -189,7 +199,7 @@ const ColorPad = (props) => {
     animatableRef.current.pulse();
     setColor(generateColor());
     setTime(gameState.mode == "oneColor" ? 1 : MathHelper.randomIntFromInterval(1, 5));
-    _onClick(color);
+    _onClick(color,player);
   };
   return (
     <TouchableOpacity onPress={onPress}>
@@ -208,6 +218,7 @@ const ColorPad = (props) => {
             <Text style={{fontSize: 50,color: "white"}}>⨉</Text>
             )}
     </Animatable.View>
+
     </TouchableOpacity>
   );
 };
@@ -219,7 +230,7 @@ export default function Game(props) {
   const [active,setActive] = useState<boolean>(false);
   const [sound, setSound] = useState();
   const countDownRef =  useRef<Animatable.View & View>(null);
-  const [gameState,setGameState] = useState({mode: "oneColor",blocked: Player.One});
+  const [gameState,setGameState] = useState<any>({mode: "oneColor",blocked: null});
 
   async function playSound() {
     console.log('Loading Sound');
@@ -257,7 +268,7 @@ export default function Game(props) {
   }, [gameTime]);
 
   useEffect(() => {
-    let intervall = setInterval(()=> {
+    setTimeout(()=> {
       if (countDown == 0) {
         countDownRef.current && countDownRef.current.flipOutY();
         setGameState({...gameState,mode: ""})
@@ -269,10 +280,15 @@ export default function Game(props) {
         countDownRef.current.animate(countDown % 2 ? flipEven : flipOdd);
       }
     }, 1000);
-    return () => {
-      clearInterval(intervall);
-    };
   }, [countDown]);
+
+  useEffect(() => {
+    if(gameState.blocked){
+      setTimeout(() => {
+        setGameState({...gameState,blocked: null});
+      },3000);
+    }
+  },[gameState]);
 
   const flipEven = {
     0: {
