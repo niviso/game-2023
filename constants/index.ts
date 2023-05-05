@@ -6,5 +6,6 @@ import Sound from "./Sound";
 import Style from "./Style";
 import Theme from "./Theme";
 import Screen from "./Screen";
+import Player from "./Player";
 
-export { Color, Size, Font, Image, Sound, Style, Screen, Theme };
+export { Color, Size, Font, Image, Sound, Style, Screen, Theme, Player };

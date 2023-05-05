@@ -1,19 +1,27 @@
 import { View, Text,SafeAreaView, StyleSheet,TouchableOpacity } from "react-native";
-import { Color, Screen } from "../../constants";
+import { Color, Screen, Player } from "../../constants";
 import { useEffect, useState, useRef } from "react";
 import { Audio } from 'expo-av';
+import { MathHelper } from '../../helpers';
 import { usePrevious } from "../../hooks";
 import * as Animatable from 'react-native-animatable';
 
-const randomIntFromInterval = (min:number, max:number):number => {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-};
 const generateColor = ():string => {
   const obj = Color.primary.slots;
   const keys = Object.keys(obj);
   const color = keys[Math.floor(Math.random() * keys.length)];
   return obj[color];
 };
+
+const CountDown = ({active,countDownRef, countDown}) => {
+  return (
+    <View style={{display: !active ? "flex" : "none",position: "absolute",width:"100%",height:"100%",alignItems:"center",justifyContent:"center"}}>
+    <Animatable.View ref={countDownRef} animation="flipInY" iterationCount={1} style={{width: Screen.Width * 0.9,height:Screen.Width * 0.9,backgroundColor:"black",borderRadius: Screen.Width * 0.9,display: "flex",alignItems:"center",justifyContent:"center"}}>
+      <Animatable.Text duration={2000} iterationCount={4} style={{fontSize: 300,color: "white"}}>{countDown}</Animatable.Text>
+    </Animatable.View>
+  </View>
+  )
+}
 
 const PrecentageBar = ({value,color}:any) => {
   const animatableRef = useRef<Animatable.View & View>(null);
@@ -24,9 +32,6 @@ const PrecentageBar = ({value,color}:any) => {
 
   },[color,value]);
 
-  useEffect(() => {
-     // animatableRef.current && animatableRef.current.animate({0: {width: (100 - prevValue).toString()+"%"},1: {width: (100 - value).toString()+"%"}})
-  },[value]);
 
   const styles = StyleSheet.create({
     wrapper: {position: "relative",width: Screen.Width,height: 30,backgroundColor:color},
@@ -47,10 +52,10 @@ const PrecentageBar = ({value,color}:any) => {
 }
 
 const PlayerController = (props) => {
-  const { player,active } = props;
+  const { player,active,setGameState,gameState } = props;
   const [points,setPoints] = useState<number>(0);
   const [powerMeter,setPowerMeter] = useState<number>(0);
-  const [time,setTime] = useState<number>(randomIntFromInterval(2, 10));
+  const [time,setTime] = useState<number>(MathHelper.randomIntFromInterval(2, 10));
   const [color,setColor] = useState<string>(generateColor());
 
 
@@ -69,7 +74,7 @@ const PlayerController = (props) => {
     let intervall = setInterval(()=> {
       if (time == 0) {
         setColor(generateColor());
-        setTime(randomIntFromInterval(1, 5));
+        setTime(MathHelper.randomIntFromInterval(1, 5));
       } else {
         setTime(time - 1);
       }
@@ -84,14 +89,14 @@ const PlayerController = (props) => {
       display: "flex",
       height: "100%",
       width: "100%",
-      flexDirection: player == "P1" ? "column" : "column-reverse",
+      flexDirection: player == Player.One ? "column" : "column-reverse",
       justifyContent: "space-between",
     },
     innerWrapper: {
       display: "flex",
       flexDirection: "row",
       width: "100%",
-      alignItems: player == "P1" ? "flex-start" : "flex-end",
+      alignItems: player == Player.One ? "flex-start" : "flex-end",
       justifyContent: "space-between",
       padding: 10,
     }
@@ -103,16 +108,16 @@ const PlayerController = (props) => {
       <View
         style={styles.innerWrapper}
       >
-        <ColorPad player={player} active={active} _onClick={onClick} />
-        <ColorPad player={player} active={active} _onClick={onClick} />
-        <ColorPad player={player} active={active} _onClick={onClick} />
-        <ColorPad player={player} active={active} _onClick={onClick} />
+        <ColorPad gameState={gameState} player={player} active={active} _onClick={onClick} />
+        <ColorPad gameState={gameState} player={player} active={active} _onClick={onClick} />
+        <ColorPad gameState={gameState} player={player} active={active} _onClick={onClick} />
+        <ColorPad gameState={gameState} player={player} active={active} _onClick={onClick} />
         
       </View>
       <PrecentageBar value={powerMeter} color={color}/>
 
-      <View style={{display: "flex",flexDirection: player == "P1" ? "column-reverse" : "column",alignItems:"center",justifyContent: player == "P1" ? "flex-end" : "flex-start"}}>
-      <View style={{transform: [ {rotate: player == "P1" ? '180deg' : '0deg'}]}}>
+      <View style={{display: "flex",flexDirection: player == Player.One ? "column-reverse" : "column",alignItems:"center",justifyContent: player == Player.One ? "flex-end" : "flex-start"}}>
+      <View style={{transform: [ {rotate: player == Player.One ? '180deg' : '0deg'}]}}>
         
         <View style={{display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"row"}}>
         <Text style={{width:150,fontSize: 100,marginTop: -150,textAlign: "left"}}></Text>
@@ -131,16 +136,35 @@ const PlayerController = (props) => {
 };
 
 const ColorPad = (props) => {
-  const { _onClick, active, player } = props;
+  const { _onClick, active, player, gameState } = props;
 
-  const [color, setColor] = useState(generateColor());
-  const [time, setTime] = useState(randomIntFromInterval(1, 3));
-  const animatableRef = useRef<Animatable.View & View>(null);  const updateColor = () => {
-    const newColor = generateColor();
-    if(newColor === color) {
-      updateColor();
+  const [color, setColor] = useState(gameState.mode === "oneColor" ? "black" : generateColor());
+  const [time, setTime] = useState(0);
+  const [seed,setSeed] = useState(0);
+  const animatableRef = useRef<Animatable.View & View>(null); 
+  
+  const getSeedColor = () => {
+    if(seed == 0){
+      setSeed(1);
+      return Color.primary.slots.slot_01;
+    } else if(seed == 1){
+      setSeed(2);
+      return Color.primary.slots.slot_02;
+    } else if(seed == 2){
+      setSeed(3);
+      return Color.primary.slots.slot_03;
+    } else if(seed == 3){
+      setSeed(0);
+      return Color.primary.slots.slot_04;
     }
-    setColor(newColor);
+  }
+  const updateColor = () => {
+    const newColor = gameState.mode == "oneColor" ? getSeedColor() : generateColor();
+
+      if(newColor === color && gameState.mode !== "oneColor") {
+        updateColor();
+      }
+      setColor(newColor);
     animatableRef.current.animate({0: {backgroundColor: color},1: {backgroundColor: newColor}})
 
   }
@@ -148,7 +172,7 @@ const ColorPad = (props) => {
     let intervall = setInterval(() => {
       if (time == 0) {
         updateColor();
-        setTime(randomIntFromInterval(1, 3));
+        setTime(gameState.mode == "oneColor" ? 1 : MathHelper.randomIntFromInterval(1, 3));
       } else {
         setTime((prevTime) => prevTime - 1);
       }
@@ -159,13 +183,12 @@ const ColorPad = (props) => {
   }, [time]);
 
   const onPress = ():void => {
-    console.log("ye");
     if(!active){
       return;
     }
     animatableRef.current.pulse();
     setColor(generateColor());
-    setTime(randomIntFromInterval(1, 5));
+    setTime(gameState.mode == "oneColor" ? 1 : MathHelper.randomIntFromInterval(1, 5));
     _onClick(color);
   };
   return (
@@ -193,7 +216,7 @@ export default function Game(props) {
   const [active,setActive] = useState<boolean>(false);
   const [sound, setSound] = useState();
   const countDownRef =  useRef<Animatable.View & View>(null);
-  const [gameState,setGameState] = useState("oneColor");
+  const [gameState,setGameState] = useState({mode: "oneColor"});
 
   async function playSound() {
     console.log('Loading Sound');
@@ -234,6 +257,7 @@ export default function Game(props) {
     let intervall = setInterval(()=> {
       if (countDown == 0) {
         countDownRef.current && countDownRef.current.flipOutY();
+        setGameState({...gameState,mode: ""})
         setTimeout(() => {
           setActive(true);
         },1000);
@@ -274,7 +298,7 @@ export default function Game(props) {
       justifyContent:"space-between"
     },
     middleWrapper: {position: "absolute",zIndex: -1,width:"100%",height:"100%",display: "flex",alignItems:"center",justifyContent:"center",transform: [{rotate:'90deg'}]},
-    middleWrapperText: {fontSize: 140, fontWeight: "lighter",color: "black"},
+    middleWrapperText: {fontSize: 140, fontWeight: "100",color: "black"},
     playerWrapper: { width: "100%", height: "50%" }
   });
   return (
@@ -288,18 +312,15 @@ export default function Game(props) {
       </View>
 
         <View style={styles.playerWrapper}>
-          <PlayerController gameState={gameState} active={active} player="P1" />
+          <PlayerController setGameState={setGameState} gameState={gameState} active={active} player={Player.One} />
         </View>
         <View style={styles.playerWrapper}>
-          <PlayerController gameState={gameState} active={active} player="P2" />
+          <PlayerController setGameState={setGameState} gameState={gameState} active={active} player={Player.Two} />
         </View>
       </View>
     </SafeAreaView>
-      <View style={{display: !active ? "flex" : "none",position: "absolute",width:"100%",height:"100%",alignItems:"center",justifyContent:"center"}}>
-        <Animatable.View ref={countDownRef} animation="flipInY" iterationCount={1} style={{width: Screen.Width * 0.9,height:Screen.Width * 0.9,backgroundColor:"black",borderRadius: Screen.Width * 0.9,display: "flex",alignItems:"center",justifyContent:"center"}}>
-          <Animatable.Text duration={2000} iterationCount={4} style={{fontSize: 300,color: "white"}}>{countDown}</Animatable.Text>
-        </Animatable.View>
-      </View>
+
+    <CountDown countDownRef={countDownRef} active={active} countDown={countDown}/>
     </>
   );
 }
