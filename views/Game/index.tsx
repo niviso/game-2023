@@ -1,9 +1,10 @@
-import { View, Text, TouchableOpacity, Dimensions,SafeAreaView } from "react-native";
-import { Color } from "../../constants";
+import { View, Text,SafeAreaView, StyleSheet,TouchableOpacity } from "react-native";
+import { Color, Screen } from "../../constants";
 import { useEffect, useState, useRef } from "react";
 import { Audio } from 'expo-av';
-import AudioHelper from "../../helpers/AudioHelper";
+import { usePrevious } from "../../hooks";
 import * as Animatable from 'react-native-animatable';
+
 const randomIntFromInterval = (min:number, max:number):number => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
@@ -15,9 +16,32 @@ const generateColor = ():string => {
 };
 
 const PrecentageBar = ({value,color}:any) => {
+  const animatableRef = useRef<Animatable.View & View>(null);
+  const prevColor = usePrevious(color);
+  const prevValue = usePrevious(value);
+  useEffect(() => {
+    animatableRef.current && animatableRef.current.animate({0: {backgroundColor: prevColor, width: (100 - (prevValue || 0)).toString()+"%"},1: {backgroundColor: color, width: (100 - value).toString()+"%"}});
+
+  },[color,value]);
+
+  useEffect(() => {
+     // animatableRef.current && animatableRef.current.animate({0: {width: (100 - prevValue).toString()+"%"},1: {width: (100 - value).toString()+"%"}})
+  },[value]);
+
+  const styles = StyleSheet.create({
+    wrapper: {position: "relative",width: Screen.Width,height: 30,backgroundColor:color},
+  });
+
   return (
-    <View style={{position: "relative",width: "100%",height: 30,backgroundColor:"black"}}>
-      <View style={{position:"absolute",width: value.toString()+"%",height:30,backgroundColor: color}}/>
+    <View style={{width: Screen.Width, display: "flex",alignItems: "center"}}>
+    { value !== 100 ? (
+      
+    <Animatable.View duration={250} ref={animatableRef} style={styles.wrapper}/>
+    ) : (
+    <Animatable.View duration={500} animation="flipInX" style={{display: "flex",justifyContent:"center",alignItems:"center",width: Screen.Width * 0.5,height: Screen.Height * 0.1,backgroundColor: color, borderRadius: 10}}>
+      <Animatable.Text duration={1000} animation="pulse" iterationCount="infinite" style={{color:"white",fontSize: 50}}>STOP</Animatable.Text>
+    </Animatable.View>
+    )}
     </View>
   )
 }
@@ -33,7 +57,9 @@ const PlayerController = (props) => {
   const onClick = (clickColor:string)=> {
     if(clickColor === color) {
       setPoints((prevPoints) => (prevPoints + 1));
-      setPowerMeter((prevPowerMeter) => (prevPowerMeter + 5));
+      if(powerMeter < 100){
+        setPowerMeter(powerMeter + 10);
+      }
     } else if(points > 0) {
       setPoints((prevPoints) => (prevPoints - 1))
     }
@@ -53,26 +79,29 @@ const PlayerController = (props) => {
     };
   }, [time]);
 
+  const styles = StyleSheet.create({
+    wrapper: {
+      display: "flex",
+      height: "100%",
+      width: "100%",
+      flexDirection: player == "P1" ? "column" : "column-reverse",
+      justifyContent: "space-between",
+    },
+    innerWrapper: {
+      display: "flex",
+      flexDirection: "row",
+      width: "100%",
+      alignItems: player == "P1" ? "flex-start" : "flex-end",
+      justifyContent: "space-between",
+      padding: 10,
+    }
+  });
+
   return (
-    <View
-      style={{
-        display: "flex",
-        height: "100%",
-        width: "100%",
-        flexDirection: player == "P1" ? "column" : "column-reverse",
-        justifyContent: "space-between",
-      }}
-    >
+    <View style={styles.wrapper}>
 
       <View
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          width: "100%",
-          alignItems: player == "P1" ? "flex-start" : "flex-end",
-          justifyContent: "space-between",
-          padding: 10,
-        }}
+        style={styles.innerWrapper}
       >
         <ColorPad player={player} active={active} _onClick={onClick} />
         <ColorPad player={player} active={active} _onClick={onClick} />
@@ -86,14 +115,16 @@ const PlayerController = (props) => {
       <View style={{transform: [ {rotate: player == "P1" ? '180deg' : '0deg'}]}}>
         
         <View style={{display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"row"}}>
-        <Text style={{width:100,fontSize: 60,marginTop: -100,textAlign: "left"}}>{points}</Text>
-        <View style={{width: 1,height:200,backgroundColor: "black"}}/>
-        <Text style={{width:100,fontSize: 14}}></Text>
+        <Text style={{width:150,fontSize: 100,marginTop: -150,textAlign: "left"}}></Text>
+        <View style={{width: 0,height:150,backgroundColor: "black"}}/>
+        <Text style={{width:150,fontSize: 100}}></Text>
         
 
         </View>
         </View>
-        <Animatable.View animation="pulse" iterationCount="infinite" style={{width: 70,height: 70,borderRadius: 50,backgroundColor:color,display: "flex",alignItems:"center",justifyContent: player == "P1" ? "flex-end" : "flex-start"}}/>
+        <View style={{width: Screen.Width * 0.2,height: Screen.Width * 0.2,borderRadius: 50,backgroundColor:color,display: "flex",alignItems:"center",justifyContent: "center"}}>
+        <Text style={{fontSize: 50,color: "white"}}>{points}</Text>
+        </View>
       </View>
     </View>
   );
@@ -110,6 +141,8 @@ const ColorPad = (props) => {
       updateColor();
     }
     setColor(newColor);
+    animatableRef.current.animate({0: {backgroundColor: color},1: {backgroundColor: newColor}})
+
   }
   useEffect(() => {
     let intervall = setInterval(() => {
@@ -126,6 +159,7 @@ const ColorPad = (props) => {
   }, [time]);
 
   const onPress = ():void => {
+    console.log("ye");
     if(!active){
       return;
     }
@@ -135,12 +169,11 @@ const ColorPad = (props) => {
     _onClick(color);
   };
   return (
-    <Animatable.View  ref={animatableRef}>
-      <TouchableOpacity
-        onPress={onPress}
+    <TouchableOpacity onPress={onPress}>
+      <Animatable.View ref={animatableRef} duration={250}
         style={{
-          width: Dimensions.get("window").width * 0.2,
-          height: Dimensions.get("window").width * 0.2,
+          width: Screen.Width * 0.2,
+          height: Screen.Width * 0.2,
           backgroundColor: color,
           borderRadius: 10,
           display: "flex",
@@ -148,9 +181,8 @@ const ColorPad = (props) => {
           justifyContent: "center"
         }}
       >
-        <Text style={{display:"none",fontSize: 32,fontWeight: "bold", transform: [{rotate: player == "P1" ? "180deg" : "0deg"}], color: "white"}}>{time}</Text>
-        </TouchableOpacity>
     </Animatable.View>
+    </TouchableOpacity>
   );
 };
 
@@ -158,10 +190,10 @@ export default function Game(props) {
   const { appState,setAppState } = props;
   const [gameTime,setGameTime] = useState<number>(120);
   const [countDown,setCountDown] = useState<number>(3);
-  const [active,setActive] = useState(false);
-  const [paused,setPaused] = useState(false);
+  const [active,setActive] = useState<boolean>(false);
   const [sound, setSound] = useState();
   const countDownRef =  useRef<Animatable.View & View>(null);
+  const [gameState,setGameState] = useState("oneColor");
 
   async function playSound() {
     console.log('Loading Sound');
@@ -207,6 +239,7 @@ export default function Game(props) {
         },1000);
       } else {
         setCountDown(countDown - 1);
+        countDownRef.current.animate(countDown % 2 ? flipEven : flipOdd);
       }
     }, 1000);
     return () => {
@@ -214,41 +247,57 @@ export default function Game(props) {
     };
   }, [countDown]);
 
-  const flip = {
+  const flipEven = {
     0: {
       transform: [{rotateZ: "0deg"}],
+    },
+    1: {
+      transform: [{rotateZ: "180deg"}],
+    },
+  };
+  const flipOdd = {
+    0: {
+      transform: [{rotateZ: "180deg"}],
     },
     1: {
       transform: [{rotateZ: "360deg"}],
     },
   };
+
+  const styles = StyleSheet.create({
+    wrapper: { width: "100%", height: "100%" },
+    innerWrapper: {
+      width: "100%",
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent:"space-between"
+    },
+    middleWrapper: {position: "absolute",zIndex: -1,width:"100%",height:"100%",display: "flex",alignItems:"center",justifyContent:"center",transform: [{rotate:'90deg'}]},
+    middleWrapperText: {fontSize: 140, fontWeight: "lighter",color: "black"},
+    playerWrapper: { width: "100%", height: "50%" }
+  });
   return (
     <>
-    <SafeAreaView style={{ width: "100%", height: "100%" }}>
+    <SafeAreaView style={styles.wrapper}>
       <View
-        style={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent:"space-between"
-        }}
+        style={styles.innerWrapper}
       >
-      <View style={{position: "absolute",zIndex: -1,width:"100%",height:"100%",display: "flex",alignItems:"center",justifyContent:"center",transform: [{rotate:'90deg'}]}}>
-          <Text style={{fontSize: 170,color: "black",opacity: 0.1}}>{gameTime}</Text>
+      <View style={styles.middleWrapper}>
+          <Text style={styles.middleWrapperText}>{gameTime}</Text>
       </View>
 
-        <View style={{ width: "100%", height: "50%" }}>
-          <PlayerController active={active} player="P1" />
+        <View style={styles.playerWrapper}>
+          <PlayerController gameState={gameState} active={active} player="P1" />
         </View>
-        <View style={{width: "100%", height: "50%" }}>
-          <PlayerController active={active} player="P2" />
+        <View style={styles.playerWrapper}>
+          <PlayerController gameState={gameState} active={active} player="P2" />
         </View>
       </View>
     </SafeAreaView>
       <View style={{display: !active ? "flex" : "none",position: "absolute",width:"100%",height:"100%",alignItems:"center",justifyContent:"center"}}>
-        <Animatable.View ref={countDownRef} animation="flipInX" iterationCount={1} style={{width: Dimensions.get("window").width * 0.9,height:Dimensions.get("window").width * 0.9,backgroundColor:"black",borderRadius: Dimensions.get("window").width * 0.9,display: "flex",alignItems:"center",justifyContent:"center"}}>
-          <Animatable.Text animation={flip} duration={1000} iterationCount={4} style={{fontSize: 300,color: "white"}}>{countDown}</Animatable.Text>
+        <Animatable.View ref={countDownRef} animation="flipInY" iterationCount={1} style={{width: Screen.Width * 0.9,height:Screen.Width * 0.9,backgroundColor:"black",borderRadius: Screen.Width * 0.9,display: "flex",alignItems:"center",justifyContent:"center"}}>
+          <Animatable.Text duration={2000} iterationCount={4} style={{fontSize: 300,color: "white"}}>{countDown}</Animatable.Text>
         </Animatable.View>
       </View>
     </>
