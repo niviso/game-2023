@@ -204,6 +204,9 @@ const ColorPad = (props) => {
           justifyContent: "center"
         }}
       >
+        {gameState.blocked === player && (
+            <Text style={{fontSize: 50,color: "white"}}>⨉</Text>
+            )}
     </Animatable.View>
     </TouchableOpacity>
   );
@@ -216,7 +219,7 @@ export default function Game(props) {
   const [active,setActive] = useState<boolean>(false);
   const [sound, setSound] = useState();
   const countDownRef =  useRef<Animatable.View & View>(null);
-  const [gameState,setGameState] = useState({mode: "oneColor"});
+  const [gameState,setGameState] = useState({mode: "oneColor",blocked: Player.One});
 
   async function playSound() {
     console.log('Loading Sound');
