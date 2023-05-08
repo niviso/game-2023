@@ -23,7 +23,7 @@ const CountDown = ({active,countDownRef, countDown}) => {
   )
 }
 
-const PrecentageBar = ({value,color,onPressStop}:any) => {
+const PrecentageBar = ({value,color,onPressStop, player}:any) => {
   const animatableRef = useRef<Animatable.View & View>(null);
   const prevColor = usePrevious(color);
   const prevValue = usePrevious(value);
@@ -38,14 +38,14 @@ const PrecentageBar = ({value,color,onPressStop}:any) => {
   });
 
   return (
-    <View style={{width: Screen.Width, display: "flex",alignItems: "center"}}>
-    { value === 100 ? (
+    <View style={{width: Screen.Width, display: "flex",alignItems: "center",justifyContent: player == Player.One ? "space-between" : "center"}}>
+    { value !== 100 ? (
       
     <Animatable.View duration={250} ref={animatableRef} style={styles.wrapper}/>
     ) : (
     <TouchableOpacity onPress={onPressStop}>
-    <Animatable.View duration={500} animation="flipInX" style={{display: "flex",justifyContent:"center",alignItems:"center",width: Screen.Width * 0.5,height: Screen.Height * 0.1,backgroundColor: color, borderRadius: 10}}>
-      <Animatable.Text duration={1000} animation="pulse" iterationCount="infinite" style={{color:"white",fontSize: 50}}>STOP</Animatable.Text>
+    <Animatable.View duration={500} animation="flipInX" style={{display: "flex",justifyContent:"center",alignItems:"center",width: Screen.Width * 0.3,height: Screen.Height * 0.07,backgroundColor: color, borderRadius: 10}}>
+      <Animatable.Text duration={1000} animation="pulse" iterationCount="infinite" style={{color:"white",fontSize: 30}}>STOP</Animatable.Text>
     </Animatable.View>
     </TouchableOpacity>
     )}
@@ -56,7 +56,7 @@ const PrecentageBar = ({value,color,onPressStop}:any) => {
 const PlayerController = (props) => {
   const { player,active,setGameState,gameState } = props;
   const [points,setPoints] = useState<number>(0);
-  const [powerMeter,setPowerMeter] = useState<number>(0);
+  const [powerMeter,setPowerMeter] = useState<number>(100);
   const [time,setTime] = useState<number>(MathHelper.randomIntFromInterval(2, 10));
   const [color,setColor] = useState<string>(generateColor());
 
@@ -96,52 +96,38 @@ const PlayerController = (props) => {
       height: "100%",
       width: "100%",
       flexDirection: player == Player.One ? "column" : "column-reverse",
-      justifyContent: "space-between",
     },
     innerWrapper: {
       display: "flex",
       flexDirection: "row",
-      width: "100%",
-      alignItems: player == Player.One ? "flex-start" : "flex-end",
       justifyContent: "space-between",
-      padding: 10,
+      padding:15
     }
   });
 
   const blockPlayer = () => {
+    setPowerMeter(0);
     setGameState({...gameState,blocked: player === Player.One ? Player.Two : Player.One})
   }
 
   return (
-    <View style={styles.wrapper}>
-
-      <View
-        style={styles.innerWrapper}
-      >
-        <ColorPad gameState={gameState} player={player} active={active} _onClick={onClick} />
-        <ColorPad gameState={gameState} player={player} active={active} _onClick={onClick} />
-        <ColorPad gameState={gameState} player={player} active={active} _onClick={onClick} />
-        <ColorPad gameState={gameState} player={player} active={active} _onClick={onClick} />
-        
-      </View>
-      <PrecentageBar onPressStop={blockPlayer} value={powerMeter} color={color}/>
-
-      <View style={{display: "flex",flexDirection: player == Player.One ? "column-reverse" : "column",alignItems:"center",justifyContent: player == Player.One ? "flex-end" : "flex-start"}}>
-      <View style={{transform: [ {rotate: player == Player.One ? '180deg' : '0deg'}]}}>
-        
-        <View style={{display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"row"}}>
-        <Text style={{width:150,fontSize: 100,marginTop: -150,textAlign: "left"}}></Text>
-        <View style={{width: 0,height:150,backgroundColor: "black"}}/>
-        <Text style={{width:150,fontSize: 100}}></Text>
-        
-
+        <View style={styles.wrapper}>
+          <View style={styles.innerWrapper}>
+            <ColorPad gameState={gameState} player={player} active={active} _onClick={onClick} />
+            <ColorPad gameState={gameState} player={player} active={active} _onClick={onClick} />
+            <ColorPad gameState={gameState} player={player} active={active} _onClick={onClick} />
+            <ColorPad gameState={gameState} player={player} active={active} _onClick={onClick} />
+          </View>
+          <View style={{height: 80,display: "flex",justifyContent:"center"}}>
+            <PrecentageBar player={player} onPressStop={blockPlayer} value={powerMeter} color={color}/>
+            </View>
+            <View style={{display: "flex",flexDirection: player == Player.One ? "column-reverse" : "column",alignItems:"center",justifyContent: player == Player.One ? "flex-end" : "flex-start"}}>
+              <View style={{height:150}}/>
+              <View style={{width: Screen.Width * 0.2,height: Screen.Width * 0.2,borderRadius: 50,backgroundColor:color,display: "flex",alignItems:"center",justifyContent: "center"}}>
+              <Text style={{fontSize: 50,color: "white"}}>{points}</Text>
+            </View>
+          </View>
         </View>
-        </View>
-        <View style={{width: Screen.Width * 0.2,height: Screen.Width * 0.2,borderRadius: 50,backgroundColor:color,display: "flex",alignItems:"center",justifyContent: "center"}}>
-        <Text style={{fontSize: 50,color: "white"}}>{points}</Text>
-        </View>
-      </View>
-    </View>
   );
 };
 
@@ -216,7 +202,7 @@ const ColorPad = (props) => {
       >
         {gameState.blocked === player && (
             <Text style={{fontSize: 50,color: "white"}}>⨉</Text>
-            )}
+        )}
     </Animatable.View>
 
     </TouchableOpacity>
@@ -269,9 +255,11 @@ export default function Game(props) {
 
   useEffect(() => {
     setTimeout(()=> {
+      if(countDown == 1){
+        setGameState({...gameState,mode: ""})
+      }
       if (countDown == 0) {
         countDownRef.current && countDownRef.current.flipOutY();
-        setGameState({...gameState,mode: ""})
         setTimeout(() => {
           setActive(true);
         },1000);
@@ -286,7 +274,7 @@ export default function Game(props) {
     if(gameState.blocked){
       setTimeout(() => {
         setGameState({...gameState,blocked: null});
-      },3000);
+      },5000);
     }
   },[gameState]);
 
@@ -317,12 +305,12 @@ export default function Game(props) {
       justifyContent:"space-between"
     },
     middleWrapper: {position: "absolute",zIndex: -1,width:"100%",height:"100%",display: "flex",alignItems:"center",justifyContent:"center",transform: [{rotate:'90deg'}]},
-    middleWrapperText: {fontSize: 140, fontWeight: "100",color: "black"},
+    middleWrapperText: {fontSize: Screen.Width * 0.2, fontWeight: "100",color: "black"},
     playerWrapper: { width: "100%", height: "50%" }
   });
   return (
     <>
-    <SafeAreaView style={styles.wrapper}>
+    <View style={styles.wrapper}>
       <View
         style={styles.innerWrapper}
       >
@@ -337,7 +325,7 @@ export default function Game(props) {
           <PlayerController setGameState={setGameState} gameState={gameState} active={active} player={Player.Two} />
         </View>
       </View>
-    </SafeAreaView>
+    </View>
 
     <CountDown countDownRef={countDownRef} active={active} countDown={countDown}/>
     </>
