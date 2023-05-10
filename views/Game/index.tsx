@@ -1,10 +1,58 @@
 import { View, Text,SafeAreaView, StyleSheet,TouchableOpacity } from "react-native";
 import { Color, Screen, Player } from "../../constants";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, forwardRef } from "react";
 import { Audio } from 'expo-av';
 import { MathHelper } from '../../helpers';
 import { usePrevious } from "../../hooks";
 import * as Animatable from 'react-native-animatable';
+
+
+
+class SoundPlayer {
+  soundObj: any;
+  audio: any;
+  loop: boolean;
+  muted: boolean;
+  ready: boolean;
+  constructor(audio,loop){
+    this.soundObj = null;
+    this.audio = audio; 
+    this.loop = loop;
+    this.muted = false;
+    this.ready = false;
+    this.init();
+  }
+  async init(){
+    const {sound} = await Audio.Sound.createAsync(this.audio);
+    this.soundObj = sound;
+    this.ready = true;
+
+  }
+  async play() {
+    console.log("PLAY");
+    if(!this.ready){
+      console.log("NOT READY");
+      return;
+    }
+    await this.soundObj.playAsync();
+    if(this.loop){
+      await this.soundObj.setIsLoopingAsync(true);
+    }
+  }
+  async setMute(value) {
+    await this.soundObj.setIsMutedAsync(value);
+  }
+  async destory(){
+    await this.soundObj.unloadAsync();
+  }
+  
+}
+
+const stopSound = new SoundPlayer(require("./stop.mp3"),false);
+const normalSound = new SoundPlayer(require("./normal_layer.mp3"),true);
+const clockSound = new SoundPlayer(require("./bgm.mp3"),true);
+
+
 
 const generateColor = ():string => {
   const obj = Color.primary.slots;
@@ -28,8 +76,9 @@ const PrecentageBar = ({value,color,onPressStop, player}:any) => {
   const prevColor = usePrevious(color);
   const prevValue = usePrevious(value);
   useEffect(() => {
-    animatableRef.current && animatableRef.current.animate({0: {backgroundColor: prevColor, width: (100 - (prevValue || 0)).toString()+"%"},1: {backgroundColor: color, width: (100 - value).toString()+"%"}});
-
+    if(prevValue !== 100){
+      animatableRef.current && animatableRef.current.animate({0: {backgroundColor: prevColor, width: (100 - (prevValue || 0)).toString()+"%"},1: {backgroundColor: color, width: (100 - value).toString()+"%"}});
+    }
   },[color,value]);
 
 
@@ -106,6 +155,8 @@ const PlayerController = (props) => {
   });
 
   const blockPlayer = () => {
+    stopSound.play();
+    normalSound.setMute(true);
     setPowerMeter(0);
     setGameState({...gameState,blocked: player === Player.One ? Player.Two : Player.One})
   }
@@ -209,36 +260,25 @@ const ColorPad = (props) => {
   );
 };
 
+
+
 export default function Game(props) {
   const { appState,setAppState } = props;
   const [gameTime,setGameTime] = useState<number>(120);
   const [countDown,setCountDown] = useState<number>(3);
   const [active,setActive] = useState<boolean>(false);
-  const [sound, setSound] = useState();
   const countDownRef =  useRef<Animatable.View & View>(null);
   const [gameState,setGameState] = useState<any>({mode: "oneColor",blocked: null});
 
-  async function playSound() {
-    console.log('Loading Sound');
-    const { sound } = await Audio.Sound.createAsync( require('./bgm.mp3'));
-    setSound(sound);
-
-    console.log('Playing Sound');
-    await sound.playAsync();
+  useEffect(() => {
+    setTimeout(() => {
+    clockSound.play();
+    normalSound.play();
+  },1000);
+  return () => {
+    clockSound.destory();
+    normalSound.destory();
   }
-
-  useEffect(() => {
-
-    return sound
-      ? () => {
-          console.log('Unloading Sound');
-          sound.unloadAsync();
-        }
-      : undefined;
-  }, [sound]);
-
-  useEffect(() => {
-    playSound();
   },[]);
   useEffect(() => {
     let intervall = setInterval(()=> {
@@ -255,7 +295,7 @@ export default function Game(props) {
 
   useEffect(() => {
     setTimeout(()=> {
-      if(countDown == 1){
+      if(countDown == 2){
         setGameState({...gameState,mode: ""})
       }
       if (countDown == 0) {
@@ -274,6 +314,7 @@ export default function Game(props) {
     if(gameState.blocked){
       setTimeout(() => {
         setGameState({...gameState,blocked: null});
+        normalSound.setMute(false);
       },5000);
     }
   },[gameState]);
@@ -309,7 +350,7 @@ export default function Game(props) {
     playerWrapper: { width: "100%", height: "50%" }
   });
   return (
-    <>
+    <SafeAreaView>
     <View style={styles.wrapper}>
       <View
         style={styles.innerWrapper}
@@ -326,8 +367,7 @@ export default function Game(props) {
         </View>
       </View>
     </View>
-
     <CountDown countDownRef={countDownRef} active={active} countDown={countDown}/>
-    </>
+    </SafeAreaView>
   );
 }
