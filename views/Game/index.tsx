@@ -5,53 +5,8 @@ import { Audio } from 'expo-av';
 import { MathHelper } from '../../helpers';
 import { usePrevious } from "../../hooks";
 import * as Animatable from 'react-native-animatable';
+import {stopSound,startSound,normalSound,clockSound} from "../../helpers/SoundPlayer";
 
-
-
-class SoundPlayer {
-  soundObj: any;
-  audio: any;
-  loop: boolean;
-  muted: boolean;
-  ready: boolean;
-  constructor(audio,loop){
-    this.soundObj = null;
-    this.audio = audio; 
-    this.loop = loop;
-    this.muted = false;
-    this.ready = false;
-    this.init();
-  }
-  async init(){
-    const {sound} = await Audio.Sound.createAsync(this.audio);
-    this.soundObj = sound;
-    this.ready = true;
-
-  }
-  async play() {
-    console.log("PLAY");
-    if(!this.ready){
-      console.log("NOT READY");
-      return;
-    }
-    await this.soundObj.replayAsync();
-    if(this.loop){
-      await this.soundObj.setIsLoopingAsync(true);
-    }
-  }
-  async setMute(value) {
-    await this.soundObj.setIsMutedAsync(value);
-  }
-  async destory(){
-    await this.soundObj.unloadAsync();
-  }
-  
-}
-
-const stopSound = new SoundPlayer(require("./stop.mp3"),false);
-const startSound = new SoundPlayer(require("./start.mp3"),false);
-const normalSound = new SoundPlayer(require("./normal_layer.mp3"),true);
-const clockSound = new SoundPlayer(require("./bgm.mp3"),true);
 
 
 
@@ -72,7 +27,7 @@ const CountDown = ({active,countDownRef, countDown}) => {
   )
 }
 
-const PrecentageBar = ({value,color,onPressStop, player}:any) => {
+const PrecentageBar = ({value,color,onPressStop, player, gameState}:any) => {
   const animatableRef = useRef<Animatable.View & View>(null);
   const prevColor = usePrevious(color);
   const prevValue = usePrevious(value);
@@ -93,7 +48,7 @@ const PrecentageBar = ({value,color,onPressStop, player}:any) => {
       
     <Animatable.View duration={250} ref={animatableRef} style={styles.wrapper}/>
     ) : (
-    <TouchableOpacity onPress={onPressStop}>
+    <TouchableOpacity onPress={onPressStop} style={{opacity: gameState.blocked === player ? 0.5 : 1}}>
     <Animatable.View duration={500} animation="flipInX" style={{display: "flex",justifyContent:"center",alignItems:"center",width: Screen.Width * 0.3,height: Screen.Height * 0.07,backgroundColor: color, borderRadius: 10}}>
       <Animatable.Text duration={1000} animation="pulse" iterationCount="infinite" style={{color:"white",fontSize: 30}}>STOP</Animatable.Text>
     </Animatable.View>
@@ -171,7 +126,7 @@ const PlayerController = (props) => {
             <ColorPad gameState={gameState} player={player} active={active} _onClick={onClick} />
           </View>
           <View style={{height: 80,display: "flex",justifyContent:"center"}}>
-            <PrecentageBar player={player} onPressStop={blockPlayer} value={powerMeter} color={color}/>
+            <PrecentageBar gameState={gameState} player={player} onPressStop={blockPlayer} value={powerMeter} color={color}/>
             </View>
             <View style={{display: "flex",flexDirection: player == Player.One ? "column-reverse" : "column",alignItems:"center",justifyContent: player == Player.One ? "flex-end" : "flex-start"}}>
               <View style={{height:150}}/>
@@ -249,7 +204,8 @@ const ColorPad = (props) => {
           borderRadius: 10,
           display: "flex",
           alignItems: "center",
-          justifyContent: "center"
+          justifyContent: "center",
+          opacity: gameState.blocked === player ? 0.5 : 1
         }}
       >
         {gameState.blocked === player && (
@@ -274,6 +230,7 @@ export default function Game(props) {
   useEffect(() => {
     setTimeout(() => {
     clockSound.play();
+    clockSound.setVolume(0.3);
     normalSound.play();
   },1000);
   return () => {
@@ -315,7 +272,7 @@ export default function Game(props) {
     if(gameState.blocked){
       setTimeout(() => {
         startSound.play();
-      },300);
+      },4000);
       setTimeout(() => {
         setGameState({...gameState,blocked: null});
         normalSound.setMute(false);
