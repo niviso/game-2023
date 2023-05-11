@@ -34,7 +34,7 @@ class SoundPlayer {
       console.log("NOT READY");
       return;
     }
-    await this.soundObj.playAsync();
+    await this.soundObj.replayAsync();
     if(this.loop){
       await this.soundObj.setIsLoopingAsync(true);
     }
@@ -49,6 +49,7 @@ class SoundPlayer {
 }
 
 const stopSound = new SoundPlayer(require("./stop.mp3"),false);
+const startSound = new SoundPlayer(require("./start.mp3"),false);
 const normalSound = new SoundPlayer(require("./normal_layer.mp3"),true);
 const clockSound = new SoundPlayer(require("./bgm.mp3"),true);
 
@@ -312,6 +313,9 @@ export default function Game(props) {
 
   useEffect(() => {
     if(gameState.blocked){
+      setTimeout(() => {
+        startSound.play();
+      },300);
       setTimeout(() => {
         setGameState({...gameState,blocked: null});
         normalSound.setMute(false);
