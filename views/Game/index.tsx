@@ -5,7 +5,7 @@ import { Audio } from 'expo-av';
 import { MathHelper } from '../../helpers';
 import { usePrevious } from "../../hooks";
 import * as Animatable from 'react-native-animatable';
-import {stopSound,startSound,normalSound,clockSound} from "../../helpers/SoundPlayer";
+import {failSound,stopSound,startSound,normalSound,clockSound,pressSound} from "../../helpers/SoundPlayer";
 
 
 const generateColor = ():string => {
@@ -62,20 +62,29 @@ const PlayerController = (props) => {
   const [powerMeter,setPowerMeter] = useState<number>(100);
   const [time,setTime] = useState<number>(MathHelper.randomIntFromInterval(2, 10));
   const [color,setColor] = useState<string>(generateColor());
+  const animatableRef = useRef<Animatable.View & View>(null); 
 
 
   const onClick = (clickColor:string,player:string)=> {
-    if(gameState.blocked === player){
+    
+    if(gameState.blocked == player){
       setPowerMeter(0);
       setPoints(0);
+      failSound.play();
+      const backgroundColor = animatableRef.current.props.style.backgroundColor
+      animatableRef.current && animatableRef.current.animate({0:{transform: [{scale: 1},{rotateZ: "0deg"}]},0.33:{transform: [{scale: 1.5},{rotateZ: "10deg"}]},0.66:{transform: [{scale: 1.5},{rotateZ: "-10deg"}]},1:{transform: [{scale: 1},{rotateZ: "0deg"}]}})
     }
-    if(clickColor === color) {
+    if(clickColor == color) {
       setPoints((prevPoints) => (prevPoints + 1));
       if(powerMeter < 100){
         setPowerMeter(powerMeter + 10);
       }
-    } else if(points > 0) {
-      setPoints((prevPoints) => (prevPoints - 1))
+      pressSound.play();
+    } else if(clickColor != color) {
+      if(points > 0){
+        setPoints((prevPoints) => (prevPoints - 1));
+      }
+      pressSound.play();
     }
   };
 
@@ -128,9 +137,9 @@ const PlayerController = (props) => {
             </View>
             <View style={{display: "flex",flexDirection: player == Player.One ? "column-reverse" : "column",alignItems:"center",justifyContent: player == Player.One ? "flex-end" : "flex-start"}}>
               <View style={{height:150}}/>
-              <View style={{width: Screen.Width * 0.2,height: Screen.Width * 0.2,borderRadius: 50,backgroundColor:color,display: "flex",alignItems:"center",justifyContent: "center"}}>
+              <Animatable.View ref={animatableRef} duration={1500} style={{width: Screen.Width * 0.2,height: Screen.Width * 0.2,borderRadius: 50,backgroundColor:color,display: "flex",alignItems:"center",justifyContent: "center"}}>
               <Text style={{fontSize: 50,color: "white"}}>{points}</Text>
-            </View>
+            </Animatable.View>
           </View>
         </View>
   );

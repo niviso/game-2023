@@ -28,15 +28,18 @@ class SoundPlayer {
         await this.soundObj.setIsLoopingAsync(true);
       }
     }
-    async setVolume(value){
+    async setVolume(value:number){
       await this.soundObj.setVolumeAsync(value);
   
     }
-    async setMute(value) {
+    async setMute(value:boolean) {
       await this.soundObj.setIsMutedAsync(value);
     }
     async destory(){
       await this.soundObj.unloadAsync();
+    }
+    async setPitch(value:number){
+        this.soundObj.setRateAsync(value,true,1);
     }
     
   }
@@ -46,5 +49,8 @@ class SoundPlayer {
   const normalSound = new SoundPlayer(require("./normal_layer.mp3"),true);
   const clockSound = new SoundPlayer(require("./bgm.mp3"),true);
   const startBgmSound = new SoundPlayer(require("./start_bgm.mp3"),true);
-  export {stopSound,startSound,startBgmSound,normalSound,clockSound}
+  const pressSound = new SoundPlayer(require("./press.mp3"),false);
+  const failSound = new SoundPlayer(require("./fail.wav"),false);
+
+  export {failSound,stopSound,startSound,startBgmSound,normalSound,clockSound,pressSound}
   
