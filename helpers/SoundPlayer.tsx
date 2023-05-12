@@ -11,7 +11,6 @@ class SoundPlayer {
       this.loop = loop;
       this.muted = false;
       this.ready = false;
-      console.log("constructor");
       this.init();
     }
     async init(){
@@ -21,9 +20,7 @@ class SoundPlayer {
       this.ready = true;
     }
     async play() {
-      console.log("PLAY");
       if(!this.ready){
-        console.log("NOT READY");
         return;
       }
       await this.soundObj.replayAsync();

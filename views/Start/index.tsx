@@ -34,7 +34,7 @@ export default function Start({ appState, setAppState }) {
 
   const updateColor = () => {
     const newColor = getSeedColor();
-    console.log(prevColor,newColor)
+    //console.log(prevColor,newColor)
     animatableRef.current.animate({0: {backgroundColor: prevColor},1: {backgroundColor: color}})
     animatableTextRef.current.animate({0: {color: animatableTextRef.current.props.style.color},1: {color: color}})
 
