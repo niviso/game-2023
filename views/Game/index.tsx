@@ -5,8 +5,7 @@ import { Audio } from 'expo-av';
 import { MathHelper } from '../../helpers';
 import { usePrevious } from "../../hooks";
 import * as Animatable from 'react-native-animatable';
-import SoundPlayer from "../../helpers/SoundPlayer";
-
+import {stopSound,startSound,normalSound,clockSound} from "../../helpers/SoundPlayer";
 
 
 const generateColor = ():string => {
@@ -227,16 +226,24 @@ export default function Game(props) {
   const [gameState,setGameState] = useState<any>({mode: "oneColor",blocked: null});
 
   useEffect(() => {
-    setTimeout(() => {
+    if(clockSound.ready){
     clockSound.play();
     clockSound.setVolume(0.3);
-    normalSound.play();
-  },1000);
   return () => {
     clockSound.destory();
+  }
+}
+  },[clockSound.ready]);
+
+  useEffect(() => {
+    if(clockSound.ready){
+      normalSound.play();
+  return () => {
     normalSound.destory();
   }
-  },[]);
+  }
+  },[normalSound.ready]);
+  
   useEffect(() => {
     let intervall = setInterval(()=> {
       if (gameTime == 0) {
