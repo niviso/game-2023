@@ -2,13 +2,15 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { Style, Color } from "../../constants";
 import * as Animatable from 'react-native-animatable';
 import {useState,useEffect,useRef} from "react";
-
+import {startBgmSound} from "../../helpers/SoundPlayer";
+import { usePrevious } from "../../hooks";
+ 
 export default function Start({ appState, setAppState }) {
   const [seed,setSeed] = useState(0);
   const animatableRef = useRef<Animatable.View & View>(null);
   const animatableTextRef = useRef<Animatable.Text & Text>(null);
   const [color,setColor] = useState(Color.primary.slots.slot_01);
-
+  const prevColor = usePrevious(color || Color.primary.slots.slot_01);
   const getSeedColor = () => {
     if(seed == 0){
       setSeed(1);
@@ -24,19 +26,20 @@ export default function Start({ appState, setAppState }) {
       return Color.primary.slots.slot_04;
     }
   }
+  useEffect(() => {
+    if(startBgmSound.ready){
+      startBgmSound.play();
+    }
+  },[startBgmSound.ready]);
+
   const updateColor = () => {
     const newColor = getSeedColor();
-    animatableRef.current.animate({0: {backgroundColor: animatableRef.current.props.style.backgroundColor},1: {backgroundColor: color}})
+    console.log(prevColor,newColor)
+    animatableRef.current.animate({0: {backgroundColor: prevColor},1: {backgroundColor: color}})
     animatableTextRef.current.animate({0: {color: animatableTextRef.current.props.style.color},1: {color: color}})
 
     setColor(newColor);
   }
-
-  useEffect(() => {
-    setTimeout(() => {
-    //startBgmSound.play();
-  },2000);
-  },[])
 
   useEffect(() => {
     setTimeout(() => {
