@@ -10,10 +10,15 @@ class SoundPlayer {
       this.loop = loop;
       this.muted = false;
       this.ready = false;
+      console.log("constructor");
       this.init();
     }
     async init(){
+        console.log("INIT");
+
       const {sound} = await Audio.Sound.createAsync(this.audio);
+      console.log("INIT");
+
       this.soundObj = sound;
       this.ready = true;
   
@@ -42,11 +47,11 @@ class SoundPlayer {
     
   }
   
-  const stopSound = new SoundPlayer(require("./stop.mp3"),false);
+/*  const stopSound = new SoundPlayer(require("./stop.mp3"),false);
   const startSound = new SoundPlayer(require("./start.mp3"),false);
   const normalSound = new SoundPlayer(require("./normal_layer.mp3"),true);
   const clockSound = new SoundPlayer(require("./bgm.mp3"),true);
-  const startBgmSound = new SoundPlayer(require("./start_bgm.mp3"),true);
-
-  export {stopSound,startSound,startBgmSound,normalSound,clockSound}
+  const startBgmSound = new SoundPlayer(require("./start_bgm.mp3"),true);*/
+  export default SoundPlayer;
+ //export {stopSound,startSound,startBgmSound,normalSound,clockSound}
   

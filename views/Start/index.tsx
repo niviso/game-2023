@@ -2,7 +2,6 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { Style, Color } from "../../constants";
 import * as Animatable from 'react-native-animatable';
 import {useState,useEffect,useRef} from "react";
-import {stopSound,startSound,startBgmSound,normalSound,clockSound} from "../../helpers/SoundPlayer";
 
 export default function Start({ appState, setAppState }) {
   const [seed,setSeed] = useState(0);
@@ -35,7 +34,7 @@ export default function Start({ appState, setAppState }) {
 
   useEffect(() => {
     setTimeout(() => {
-    startBgmSound.play();
+    //startBgmSound.play();
   },2000);
   },[])
 

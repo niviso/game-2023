@@ -5,8 +5,7 @@ import { Audio } from 'expo-av';
 import { MathHelper } from '../../helpers';
 import { usePrevious } from "../../hooks";
 import * as Animatable from 'react-native-animatable';
-import {stopSound,startSound,normalSound,clockSound} from "../../helpers/SoundPlayer";
-
+import SoundPlayer from "../../helpers/SoundPlayer";
 
 
 
