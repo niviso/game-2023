@@ -6,10 +6,14 @@ module.exports = function (api) {
       [
         "module-resolver",
         {
+          root: ["./"],
           alias: {
-            components: "./src/components",
-            views: "./src/views",
-            constants: "./src/constants",
+            "@/components": "./components/",
+            "@/types": "./types/",
+            "@/views": "./views/",
+            "@/helpers": "./helpers/",
+            "@/constants": "./constants/",
+            "@/contexts": "./contexts/",
           },
         },
       ],
