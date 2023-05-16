@@ -1,5 +1,5 @@
 import Audio from "./Audio";
-import Color from "./Color";
+import {Color,generateColor} from "./Color";
 import Size from "./Size";
 import Font from "./Font";
 import Image from "./Image";
@@ -9,4 +9,4 @@ import Theme from "./Theme";
 import Screen from "./Screen";
 import Player from "./Player";
 
-export { Audio, Color, Size, Font, Image, Sound, Style, Screen, Theme, Player };
+export { Audio, Color, Size, Font, generateColor, Image, Sound, Style, Screen, Theme, Player };

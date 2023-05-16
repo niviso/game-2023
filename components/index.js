@@ -1,4 +1,7 @@
 import Effect from "./effect";
 import Link from "./link";
 import Route from "./route";
-export { Effect, Link, Route };
+import ColorPad from "./ColorPad";
+import PrecentageBar from "./PrecentageBar";
+
+export { ColorPad, Effect, Link, Route, PrecentageBar };
