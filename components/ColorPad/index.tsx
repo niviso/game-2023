@@ -12,6 +12,7 @@ export default function ColorPad(props) {
     const prevColor = usePrevious(color);
     const [skipNextUpdate,setSkipNextUpdate] = useState(false);
     const animatableRef = useRef<Animatable.View & View>(null); 
+    const animatableWrapperRef = useRef<Animatable.View & View>(null); 
     
     const getSeedColor = () => {
       if(seed == 0){
@@ -58,13 +59,13 @@ export default function ColorPad(props) {
       if(!active){
         return;
       }
-      animatableRef.current.pulse();
+      animatableWrapperRef.current.animate({0:{transform: [{scale: 1}]},0.5:{transform: [{scale: 0.5}]},1:{transform: [{scale: 1}]}});
       setColor(generateColor());
       setSkipNextUpdate(true);
       _onClick(color,player);
     };
     return (
-      <View onTouchStart={onPress}>
+      <Animatable.View ref={animatableWrapperRef} duration={250} onTouchStart={onPress}>
         <Animatable.View ref={animatableRef} duration={500}
           style={{
             width: Screen.Width * 0.2,
@@ -82,6 +83,6 @@ export default function ColorPad(props) {
           )}
       </Animatable.View>
   
-      </View>
+      </Animatable.View>
     );
   };
