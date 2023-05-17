@@ -2,15 +2,14 @@ import { View, Text } from "react-native";
 import { useEffect,useRef,useState } from "react";
 import * as Animatable from 'react-native-animatable';
 import { Color, Screen, generateColor } from "../../constants";
-import { MathHelper } from '../../helpers';
-
+import { usePrevious } from "../../hooks";
 
 export default function ColorPad(props) {
     const { _onClick, active, player, gameState } = props;
   
     const [color, setColor] = useState(gameState.mode === "oneColor" ? "black" : generateColor());
-    const [time, setTime] = useState(1);
     const [seed,setSeed] = useState(0);
+    const prevColor = usePrevious(color);
     const [skipNextUpdate,setSkipNextUpdate] = useState(false);
     const animatableRef = useRef<Animatable.View & View>(null); 
     
@@ -30,13 +29,13 @@ export default function ColorPad(props) {
       }
     }
     const updateColor = () => {
-      const newColor = gameState.mode == "oneColor" ? getSeedColor() : generateColor();
-  
-        if(newColor === color && gameState.mode !== "oneColor") {
+        console.log("UPDATING color");
+
+        const newColor = gameState.mode == "oneColor" ? getSeedColor() : generateColor();
+        if(newColor === color) {
           updateColor();
         }
         setColor(newColor);
-      animatableRef.current.animate({0: {backgroundColor: color},1: {backgroundColor: newColor}})
   
     }
     useEffect(() => {
@@ -46,8 +45,14 @@ export default function ColorPad(props) {
         } else {
             setSkipNextUpdate(false);
         }
-      }, 1000);
+
+        console.log("Update effext!",Math.random());
+      }, gameState.mode == "oneColor" ? 1000 : 2000);
     }, [color]);
+
+    useEffect(() => {
+        animatableRef.current.animate({0: {backgroundColor: prevColor},1: {backgroundColor: color}})
+    },[color])
   
     const onPress = ():void => {
       if(!active){
@@ -60,11 +65,11 @@ export default function ColorPad(props) {
     };
     return (
       <View onTouchStart={onPress}>
-        <Animatable.View ref={animatableRef} duration={250}
+        <Animatable.View ref={animatableRef} duration={500}
           style={{
             width: Screen.Width * 0.2,
             height: Screen.Width * 0.2,
-            backgroundColor: color,
+            backgroundColor: "black",
             borderRadius: 10,
             display: "flex",
             alignItems: "center",
@@ -75,7 +80,6 @@ export default function ColorPad(props) {
           {gameState.blocked === player && (
               <Text style={{fontSize: 50,color: "white"}}>⨉</Text>
           )}
-          <Text>{skipNextUpdate ? "SKIP" : "no skip"}</Text>
       </Animatable.View>
   
       </View>

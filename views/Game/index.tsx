@@ -1,6 +1,6 @@
-import { View, Text,SafeAreaView, StyleSheet,TouchableOpacity } from "react-native";
+import { View, Text,SafeAreaView, StyleSheet } from "react-native";
 import { generateColor, Screen, Player } from "../../constants";
-import { useEffect, useState, useRef, forwardRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { MathHelper } from '../../helpers';
 import * as Animatable from 'react-native-animatable';
 import {failSound,stopSound,startSound,normalSound,clockSound,pressSound} from "../../helpers/SoundPlayer";
@@ -75,7 +75,9 @@ const PlayerController = (props) => {
       flexDirection: "row",
       justifyContent: "space-between",
       padding:15
-    }
+    },
+    precentageBarWrapper:{height: 80,display: "flex",justifyContent:"center"},
+    pointsWrapper: {display: "flex",flexDirection: player == Player.One ? "column-reverse" : "column",alignItems:"center",justifyContent: player == Player.One ? "flex-end" : "flex-start"}
   });
 
   const blockPlayer = () => {
@@ -93,10 +95,10 @@ const PlayerController = (props) => {
             <ColorPad gameState={gameState} player={player} active={active} _onClick={onClick} />
             <ColorPad gameState={gameState} player={player} active={active} _onClick={onClick} />
           </View>
-          <View style={{height: 80,display: "flex",justifyContent:"center"}}>
+          <View style={styles.precentageBarWrapper}>
             <PrecentageBar gameState={gameState} player={player} onPressStop={blockPlayer} value={powerMeter} color={color}/>
             </View>
-            <View style={{display: "flex",flexDirection: player == Player.One ? "column-reverse" : "column",alignItems:"center",justifyContent: player == Player.One ? "flex-end" : "flex-start"}}>
+            <View style={styles.pointsWrapper}>
               <View style={{height:150}}/>
               <Animatable.View ref={animatableRef} duration={1500} style={{width: Screen.Width * 0.2,height: Screen.Width * 0.2,borderRadius: 50,backgroundColor:color,display: "flex",alignItems:"center",justifyContent: "center"}}>
               <Text style={{fontSize: 50,color: "white"}}>{points}</Text>
