@@ -150,7 +150,7 @@ export default function Game(props) {
 
   useEffect(() => {
     setTimeout(()=> {
-      if(countDown == 2){
+      if(countDown == 1){
         setGameState({...gameState,mode: ""})
       }
       if (countDown == 0) {

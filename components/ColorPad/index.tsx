@@ -1,4 +1,4 @@
-import { View, Text,TouchableOpacity } from "react-native";
+import { View, Text } from "react-native";
 import { useEffect,useRef,useState } from "react";
 import * as Animatable from 'react-native-animatable';
 import { Color, Screen, generateColor } from "../../constants";
@@ -39,17 +39,10 @@ export default function ColorPad(props) {
   
     }
     useEffect(() => {
-      let intervall = setTimeout(() => {
-        const newTime = time - 1;
-        if (newTime <= 0) {
-          updateColor();
-          setTime(1);
-        } else {
-          console.log("ELSE",newTime);
-          setTime(newTime);
-        }
+      setTimeout(() => {
+        updateColor();
       }, 1000);
-    }, [time]);
+    }, [color]);
   
     const onPress = ():void => {
       if(!active){
@@ -61,7 +54,7 @@ export default function ColorPad(props) {
       _onClick(color,player);
     };
     return (
-      <TouchableOpacity onPress={onPress}>
+      <View onTouchStart={onPress}>
         <Animatable.View ref={animatableRef} duration={250}
           style={{
             width: Screen.Width * 0.2,
@@ -79,6 +72,6 @@ export default function ColorPad(props) {
           )}
       </Animatable.View>
   
-      </TouchableOpacity>
+      </View>
     );
   };
