@@ -9,8 +9,9 @@ export default function ColorPad(props) {
     const { _onClick, active, player, gameState } = props;
   
     const [color, setColor] = useState(gameState.mode === "oneColor" ? "black" : generateColor());
-    const [time, setTime] = useState(0);
+    const [time, setTime] = useState(1);
     const [seed,setSeed] = useState(0);
+    const [skipNextUpdate,setSkipNextUpdate] = useState(false);
     const animatableRef = useRef<Animatable.View & View>(null); 
     
     const getSeedColor = () => {
@@ -40,7 +41,11 @@ export default function ColorPad(props) {
     }
     useEffect(() => {
       setTimeout(() => {
-        updateColor();
+        if(!skipNextUpdate){
+            updateColor();
+        } else {
+            setSkipNextUpdate(false);
+        }
       }, 1000);
     }, [color]);
   
@@ -50,7 +55,7 @@ export default function ColorPad(props) {
       }
       animatableRef.current.pulse();
       setColor(generateColor());
-      setTime(gameState.mode == "oneColor" ? 1 : MathHelper.randomIntFromInterval(1, 5));
+      setSkipNextUpdate(true);
       _onClick(color,player);
     };
     return (
@@ -70,6 +75,7 @@ export default function ColorPad(props) {
           {gameState.blocked === player && (
               <Text style={{fontSize: 50,color: "white"}}>⨉</Text>
           )}
+          <Text>{skipNextUpdate ? "SKIP" : "no skip"}</Text>
       </Animatable.View>
   
       </View>
