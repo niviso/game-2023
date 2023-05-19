@@ -1,8 +1,19 @@
 import { TouchableOpacity } from "react-native";
 import { Style, Color } from "../../constants";
 import * as Animatable from 'react-native-animatable';
+import {clockSound} from "../../helpers/SoundPlayer";
+import {useEffect} from "react";
+
 export default function Start({setCurrentPath}) {
 
+  useEffect(() => {
+    if(clockSound.ready){
+    clockSound.play();
+  return () => {
+    clockSound.destory();
+  }
+}
+  },[clockSound.ready]);
   const goToGame = () => {
     setCurrentPath("Game");
   }
@@ -30,7 +41,7 @@ export default function Start({setCurrentPath}) {
         >
           COLOR FIGHT
         </Animatable.Text>
-          <Animatable.Text animation="pulse" direction="alternate" iterationCount="infinite" duration={1000} delay={1000} style={{ color: "white", marginTop: 25, fontSize: 25 }}>
+          <Animatable.Text animation="pulse" iterationCount="infinite" duration={1000} delay={1000} style={{ color: "white", marginTop: 25, fontSize: 25 }}>
             Press anywhere to start
           </Animatable.Text>
       </Animatable.View>

@@ -48,7 +48,7 @@ class SoundPlayer {
   const startSound = new SoundPlayer(require("./start.mp3"),false);
   const normalSound = new SoundPlayer(require("./normal_layer.mp3"),true);
   const clockSound = new SoundPlayer(require("./bgm.mp3"),true);
-  const startBgmSound = new SoundPlayer(require("./start_bgm.mp3"),true);
+  const startBgmSound = new SoundPlayer(require("./stop_layer.mp3"),true);
   const pressSound = new SoundPlayer(require("./press.mp3"),false);
   const failSound = new SoundPlayer(require("./fail.wav"),false);
 
