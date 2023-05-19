@@ -5,7 +5,7 @@ class SoundPlayer {
     loop: boolean;
     muted: boolean;
     ready: boolean;
-    constructor(audio,loop){
+    constructor(audio:any,loop:boolean){
       this.soundObj = null;
       this.audio = audio; 
       this.loop = loop;

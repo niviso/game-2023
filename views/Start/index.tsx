@@ -1,19 +1,19 @@
 import { TouchableOpacity } from "react-native";
-import { Style, Color } from "../../constants";
+import { Style,generateColor } from "../../constants";
 import * as Animatable from 'react-native-animatable';
-import {clockSound} from "../../helpers/SoundPlayer";
+import {startBgmSound} from "../../helpers/SoundPlayer";
 import {useEffect} from "react";
 
 export default function Start({setCurrentPath}) {
-
+  const color = generateColor();
   useEffect(() => {
-    if(clockSound.ready){
-    clockSound.play();
+    if(startBgmSound.ready){
+    startBgmSound.play();
   return () => {
-    clockSound.destory();
+    startBgmSound.destory();
   }
 }
-  },[clockSound.ready]);
+  },[startBgmSound.ready]);
   const goToGame = () => {
     setCurrentPath("Game");
   }
@@ -23,7 +23,7 @@ export default function Start({setCurrentPath}) {
         style={{
           ...Style.flexCenter,
           ...Style.fillScreen,
-          backgroundColor: Color.primary.slots.slot_01
+          backgroundColor: color
         }}
       >
         <Animatable.Text
@@ -35,7 +35,7 @@ export default function Start({setCurrentPath}) {
             textAlign: "center",
             paddingTop: 25,
             paddingBottom: 25,
-            color: Color.primary.slots.slot_01,
+            color: color,
             borderRadius: 20,
           }}
         >

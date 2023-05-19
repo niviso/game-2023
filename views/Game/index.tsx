@@ -1,4 +1,4 @@
-import { View, Text,SafeAreaView, StyleSheet } from "react-native";
+import { View,SafeAreaView, StyleSheet } from "react-native";
 import { Screen, Player } from "../../constants";
 import { useEffect, useState } from "react";
 import {startSound,normalSound,clockSound} from "../../helpers/SoundPlayer";
