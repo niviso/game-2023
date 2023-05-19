@@ -29,12 +29,16 @@ export default function ColorPad(props) {
         return Color.primary.slots.slot_04;
       }
     }
+    
     const updateColor = () => {
         const newColor = gameState.mode == "oneColor" ? getSeedColor() : generateColor();
-        if(newColor === color) {
+        if(newColor == color) {
           updateColor();
+          return;
         }
+        animatableRef.current && animatableRef.current.animate({0: {backgroundColor: color},1: {backgroundColor: newColor}})
         setColor(newColor);
+
     }
     useEffect(() => {
       setTimeout(() => {
@@ -47,15 +51,15 @@ export default function ColorPad(props) {
     }, [color]);
 
     useEffect(() => {
-        animatableRef.current.animate({0: {backgroundColor: prevColor},1: {backgroundColor: color}})
-    },[color])
+        animatableRef.current && animatableRef.current.animate({0: {backgroundColor: "white"},1: {backgroundColor: "black"}})
+    },[]);
   
     const onPress = ():void => {
       if(!active){
         return;
       }
-      animatableWrapperRef.current.animate({0:{transform: [{scale: 1}]},0.5:{transform: [{scale: 0.5}]},1:{transform: [{scale: 1}]}});
-      setColor(generateColor());
+      animatableWrapperRef.current && animatableWrapperRef.current.animate({0:{transform: [{scale: 1}]},0.5:{transform: [{scale: 0.5}]},1:{transform: [{scale: 1}]}});
+      updateColor();
       setSkipNextUpdate(true);
       _onClick(color,player);
     };
@@ -63,7 +67,6 @@ export default function ColorPad(props) {
         wrapper: {
             width: Screen.Width * 0.2,
             height: Screen.Width * 0.2,
-            backgroundColor: "black",
             borderRadius: 10,
             display: "flex",
             alignItems: "center",
@@ -74,12 +77,13 @@ export default function ColorPad(props) {
     });
     return (
       <Animatable.View ref={animatableWrapperRef} duration={250} onTouchStart={onPress}>
-        <Animatable.View ref={animatableRef} duration={500}
+        <Animatable.View ref={animatableRef} duration={250}
           style={styles.wrapper}
         >
           {gameState.blocked === player && (
               <Text style={styles.textWrapper}>⨉</Text>
           )}
+          <Text>{skipNextUpdate ? "Skip" : ""}</Text>
       </Animatable.View>
   
       </Animatable.View>

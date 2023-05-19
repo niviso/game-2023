@@ -1,5 +1,4 @@
 import { View, Text } from "react-native";
-import { Effect, Link } from "../../components";
 export default function Score({ route, appState }) {
   return (
     <View>

@@ -1,36 +1,21 @@
 import { AppProvider } from "./contexts";
 import { StatusBar } from "expo-status-bar";
 import { Route } from "./components";
-import { Start, Select, Game, Score, Credits, Settings } from "./views";
 import {useState} from "react";
-import {Text} from "react-native";
-
+import { Start, Select, Game, Score, Credits, Settings } from "./views";
 export default function App() {
-
-  const [loaded,setLoaded] = useState<boolean>(true);
-
-  
-
-
-
-
-  return (
+  const [currentPath,setCurrentPath] = useState("start")
+  return ( 
     <AppProvider>
       <StatusBar hidden />
-      {loaded ? (
       <>
-        <Route path="start" component={Start} />
-        <Route path="select" component={Select} />
-        <Route path="game" component={Game} />
-        <Route path="score" component={Score} />
-        <Route path="credits" component={Credits} />
-        <Route path="settings" component={Settings} />
+        <Route path="start" currentPath={currentPath} setCurrentPath={setCurrentPath} component={Start} />
+        <Route path="select" currentPath={currentPath} setCurrentPath={setCurrentPath} component={Select} />
+        <Route path="game" currentPath={currentPath} setCurrentPath={setCurrentPath} component={Game} />
+        <Route path="score" currentPath={currentPath} setCurrentPath={setCurrentPath} component={Score} />
+        <Route path="credits" currentPath={currentPath} setCurrentPath={setCurrentPath} component={Credits} />
+        <Route path="settings" currentPath={currentPath} setCurrentPath={setCurrentPath} component={Settings} />
       </>
-      ) : (
-        <>
-        <Text>Loading</Text>
-        </>
-      )}
     </AppProvider>
   );
 }

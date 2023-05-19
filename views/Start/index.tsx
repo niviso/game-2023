@@ -1,54 +1,14 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { Style, Color } from "../../constants";
 import * as Animatable from 'react-native-animatable';
-import {useState,useEffect,useRef} from "react";
-import {startBgmSound} from "../../helpers/SoundPlayer";
-import { usePrevious } from "../../hooks";
- 
-export default function Start({ appState, setAppState }) {
-  const [seed,setSeed] = useState(0);
-  const animatableRef = useRef<Animatable.View & View>(null);
-  const animatableTextRef = useRef<Animatable.Text & Text>(null);
-  const [color,setColor] = useState(Color.primary.slots.slot_01);
-  const prevColor = usePrevious(color || Color.primary.slots.slot_01);
-  const getSeedColor = () => {
-    if(seed == 0){
-      setSeed(1);
-      return Color.primary.slots.slot_01;
-    } else if(seed == 1){
-      setSeed(2);
-      return Color.primary.slots.slot_02;
-    } else if(seed == 2){
-      setSeed(3);
-      return Color.primary.slots.slot_03;
-    } else if(seed == 3){
-      setSeed(0);
-      return Color.primary.slots.slot_04;
-    }
+export default function Start({setCurrentPath}) {
+
+  const goToGame = () => {
+    setCurrentPath("game");
   }
-  useEffect(() => {
-    if(startBgmSound.ready){
-      startBgmSound.play();
-    }
-  },[startBgmSound.ready]);
-
-  const updateColor = () => {
-    const newColor = getSeedColor();
-    //console.log(prevColor,newColor)
-    animatableRef.current.animate({0: {backgroundColor: prevColor},1: {backgroundColor: color}})
-    animatableTextRef.current.animate({0: {color: animatableTextRef.current.props.style.color},1: {color: color}})
-
-    setColor(newColor);
-  }
-
-  useEffect(() => {
-    setTimeout(() => {
-      updateColor();
-    },2000);
-  }, [seed]);
   return (
-    <TouchableOpacity onPress={() => setAppState({...appState,path:"game"})} style={Style.fillScreen}>
-      <Animatable.View ref={animatableRef} duration={2000}
+    <TouchableOpacity onPress={goToGame} style={Style.fillScreen}>
+      <Animatable.View duration={2000}
         style={{
           ...Style.flexCenter,
           ...Style.fillScreen,
@@ -56,7 +16,7 @@ export default function Start({ appState, setAppState }) {
         }}
       >
         <Animatable.Text
-        ref={animatableTextRef} animation="bounceIn" direction="alternate" duration={2000}
+        animation="bounceIn" direction="alternate" duration={2000}
           style={{
             fontSize: 80,
             width: "90%",
