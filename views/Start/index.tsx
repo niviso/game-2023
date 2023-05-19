@@ -4,7 +4,7 @@ import * as Animatable from 'react-native-animatable';
 export default function Start({setCurrentPath}) {
 
   const goToGame = () => {
-    setCurrentPath("game");
+    setCurrentPath("Game");
   }
   return (
     <TouchableOpacity onPress={goToGame} style={Style.fillScreen}>
