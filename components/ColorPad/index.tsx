@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { useEffect,useRef,useState } from "react";
 import * as Animatable from 'react-native-animatable';
 import { Color, Screen, generateColor } from "../../constants";
@@ -30,14 +30,11 @@ export default function ColorPad(props) {
       }
     }
     const updateColor = () => {
-        console.log("UPDATING color");
-
         const newColor = gameState.mode == "oneColor" ? getSeedColor() : generateColor();
         if(newColor === color) {
           updateColor();
         }
         setColor(newColor);
-  
     }
     useEffect(() => {
       setTimeout(() => {
@@ -46,8 +43,6 @@ export default function ColorPad(props) {
         } else {
             setSkipNextUpdate(false);
         }
-
-        console.log("Update effext!",Math.random());
       }, gameState.mode == "oneColor" ? 1000 : 2000);
     }, [color]);
 
@@ -64,10 +59,8 @@ export default function ColorPad(props) {
       setSkipNextUpdate(true);
       _onClick(color,player);
     };
-    return (
-      <Animatable.View ref={animatableWrapperRef} duration={250} onTouchStart={onPress}>
-        <Animatable.View ref={animatableRef} duration={500}
-          style={{
+    const styles = StyleSheet.create({
+        wrapper: {
             width: Screen.Width * 0.2,
             height: Screen.Width * 0.2,
             backgroundColor: "black",
@@ -76,10 +69,16 @@ export default function ColorPad(props) {
             alignItems: "center",
             justifyContent: "center",
             opacity: gameState.blocked === player ? 0.5 : 1
-          }}
+          },
+          textWrapper: {fontSize: 50,color: "white"}
+    });
+    return (
+      <Animatable.View ref={animatableWrapperRef} duration={250} onTouchStart={onPress}>
+        <Animatable.View ref={animatableRef} duration={500}
+          style={styles.wrapper}
         >
           {gameState.blocked === player && (
-              <Text style={{fontSize: 50,color: "white"}}>⨉</Text>
+              <Text style={styles.textWrapper}>⨉</Text>
           )}
       </Animatable.View>
   
