@@ -83,7 +83,6 @@ export default function ColorPad(props) {
           {gameState.blocked === player && (
               <Text style={styles.textWrapper}>⨉</Text>
           )}
-          <Text>{skipNextUpdate ? "Skip" : ""}</Text>
       </Animatable.View>
   
       </Animatable.View>
