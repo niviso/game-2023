@@ -1,15 +1,14 @@
 import { View, Text, StyleSheet } from "react-native";
 import { useEffect,useRef,useState } from "react";
 import * as Animatable from 'react-native-animatable';
-import { Color, Screen, generateColor } from "../../constants";
-import { usePrevious } from "../../hooks";
+import { Color, Screen, generateColor,Time } from "../../constants";
 
 export default function ColorPad(props) {
     const { _onClick, active, player, gameState } = props;
   
     const [color, setColor] = useState(gameState.mode === "oneColor" ? "black" : generateColor());
     const [seed,setSeed] = useState(0);
-    const prevColor = usePrevious(color);
+    
     const [skipNextUpdate,setSkipNextUpdate] = useState(false);
     const animatableRef = useRef<Animatable.View & View>(null); 
     const animatableWrapperRef = useRef<Animatable.View & View>(null); 
@@ -29,6 +28,11 @@ export default function ColorPad(props) {
         return Color.primary.slots.slot_04;
       }
     }
+
+    const animateColor = (from:string,to:string) => {
+      animatableRef.current && animatableRef.current.animate({0: {backgroundColor: from},1: {backgroundColor: to}})
+
+    }
     
     const updateColor = () => {
         const newColor = gameState.mode == "oneColor" ? getSeedColor() : generateColor();
@@ -36,22 +40,24 @@ export default function ColorPad(props) {
           updateColor();
           return;
         }
-        animatableRef.current && animatableRef.current.animate({0: {backgroundColor: color},1: {backgroundColor: newColor}})
+        animateColor(color,newColor);
         setColor(newColor);
 
     }
     useEffect(() => {
+      const nextTimeoutTime = gameState.mode == "oneColor" ? Time.Second : (Time.Second * 2);
+
       setTimeout(() => {
         if(!skipNextUpdate){
             updateColor();
         } else {
             setSkipNextUpdate(false);
         }
-      }, gameState.mode == "oneColor" ? 1000 : 2000);
+      }, nextTimeoutTime);
     }, [color]);
 
     useEffect(() => {
-        animatableRef.current && animatableRef.current.animate({0: {backgroundColor: "white"},1: {backgroundColor: "black"}})
+      animateColor("white","black");
     },[]);
   
     const onPress = ():void => {

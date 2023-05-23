@@ -1,10 +1,9 @@
 import { View, Text } from "react-native";
-export default function Score({ route, appState }) {
+export default function Score({ setCurrentPath }) {
   return (
     <View>
       <Text>
-        Score SCREEN {appState.route} ROUTE: {route}
-        ACTIVE ? {JSON.stringify(appState)}
+      Score screen!
       </Text>
     </View>
   );
