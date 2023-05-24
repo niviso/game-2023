@@ -39,11 +39,11 @@ export default function Game({setCurrentPath}:any) {
         setGameState({...gameState,mode: GameMode.none})
         setTimeout(() => {
         setActive(true);
-      },Time.getSeconds(1));
+      },Time.getSecondsInMs(1));
       } else {
         setCountDown(countDown - 1);
       }
-    }, Time.getSeconds(1));
+    }, Time.getSecondsInMs(1));
   }, [countDown]);
   useEffect(() => {
     if(countDown == 0){
@@ -53,7 +53,7 @@ export default function Game({setCurrentPath}:any) {
         } else {
           setGameTime(gameTime - 1);
         }
-      }, Time.getSeconds(1));
+      }, Time.getSecondsInMs(1));
     }
   }, [gameTime]);
 

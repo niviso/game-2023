@@ -3,7 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import {useState} from "react";
 import { Start, Select, Game, Score, Credits, Settings } from "./views";
 export default function App() {
-  const [currentPath,setCurrentPath] = useState("Game");
+  const [currentPath,setCurrentPath] = useState("Start");
   const paths = [Start, Select, Game, Score, Credits, Settings];
   return ( 
     <AppProvider>

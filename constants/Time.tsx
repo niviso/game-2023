@@ -1,10 +1,17 @@
 const Time = {
-    second: 1000,
-    getSeconds: (seconds:number) => {
-        return Time.second * seconds;
+    second: 1,
+    msMultiplier: 1000,
+    seconds: (multiplier:number) => {
+
     },
-    getMinutes:(minutes:number) => {
-        return ((Time.second * 60) * minutes);
-    }
+    getSeconds: (multiplier:number,inMs=false) => {
+        return Time.second * multiplier;
+    },
+    getSecondsInMs: (multiplier:number) => {
+        return Time.msMultiplier * multiplier;
+    },
+    getMinutes:(multiplier:number,inMs=false) => {
+        return ((Time.second * 60) * multiplier);
+    },
 }
 export default Time;
