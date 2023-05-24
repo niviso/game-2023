@@ -1,8 +1,8 @@
 import { View,SafeAreaView, StyleSheet } from "react-native";
-import { Screen, Player } from "../../constants";
+import { Screen, Player,Time, GameMode } from "../../constants";
 import { useEffect, useState } from "react";
 import {startSound,normalSound,clockSound} from "../../helpers/SoundPlayer";
-import {PlayerController,CountDown,Clock,ColorPad} from "../../components";
+import {PlayerController,CountDown,Clock} from "../../components";
 
 
 
@@ -10,7 +10,7 @@ import {PlayerController,CountDown,Clock,ColorPad} from "../../components";
 export default function Game({setCurrentPath}:any) {
   const [active,setActive] = useState<boolean>(false);
   const [countDown,setCountDown] = useState<number>(3);
-  const [gameState,setGameState] = useState<any>({mode: "oneColor",blocked: null});
+  const [gameState,setGameState] = useState<any>({mode: GameMode.oneColor,blocked: null});
   const [gameTime,setGameTime] = useState<number>(0);
 
   useEffect(() => {
@@ -35,15 +35,15 @@ export default function Game({setCurrentPath}:any) {
   useEffect(() => {
     setTimeout(()=> {
       if (countDown == 0) {
-        setGameTime(60);
-        setGameState({...gameState,mode: ""})
+        setGameTime(Time.getMinutes(1));
+        setGameState({...gameState,mode: GameMode.none})
         setTimeout(() => {
         setActive(true);
-      },1000);
+      },Time.getSeconds(1));
       } else {
         setCountDown(countDown - 1);
       }
-    }, 1000);
+    }, Time.getSeconds(1));
   }, [countDown]);
   useEffect(() => {
     if(countDown == 0){
@@ -53,7 +53,7 @@ export default function Game({setCurrentPath}:any) {
         } else {
           setGameTime(gameTime - 1);
         }
-      }, 1000);
+      }, Time.getSeconds(1));
     }
   }, [gameTime]);
 

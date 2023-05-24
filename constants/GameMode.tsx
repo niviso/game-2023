@@ -1,4 +1,5 @@
 enum GameMode{
+    none = "",
     oneColor = "oneColor"
 }
 
