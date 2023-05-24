@@ -4,11 +4,32 @@ import * as Animatable from 'react-native-animatable';
 import { Color, Screen, generateColor,Time,GameMode } from "../../constants";
 import { usePrevious } from "../../hooks";
 
+
+const useInterval = (callback, delay) => {
+  const savedCallback = useRef<Function>();
+
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  useEffect(() => {
+    const tick = () => {
+      savedCallback.current();
+    }
+    if (delay !== null) {
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
+};
+
+
+
 export default function ColorPad(props) {
     const { onClick, active, player, gameState } = props;
   
     const [color, setColor] = useState<string>(Color.white);
-    const prevColor = usePrevious(color || "white");
+    const prevColor = usePrevious(color || Color.white);
     const [seed,setSeed] = useState<number>(0);
     
     const [skipNextUpdate,setSkipNextUpdate] = useState<boolean>(false);
@@ -30,31 +51,26 @@ export default function ColorPad(props) {
       }
     }
 
-    const animateColor = (from:string,to:string):void => {
-      console.log(from,to);
-      animatableRef.current && animatableRef.current.animate({0: {backgroundColor: from},1: {backgroundColor: to}})
-    }
+    useEffect(() => {
+      animatableRef.current && animatableRef.current.animate({0: {backgroundColor: prevColor},1: {backgroundColor: color}})
+    },[color]);
     
     const updateColor = ():void => {
         const newColor = gameState.mode == GameMode.oneColor ? getSeedColor() : generateColor();
-        if(newColor == color) {
+        if(color === newColor) {
+          console.log("Girl same color try again");
           updateColor();
         }
-        animateColor(color,newColor);
         setColor(newColor);
     }
-    useEffect(() => {
-      const intervall = setInterval(() => {
-        if(!skipNextUpdate){
-            updateColor();
-        } else {
-            setSkipNextUpdate(false);
-        }
-      }, Time.Second);
-      return () => {
-        clearInterval(intervall);
-      }
-    },[]);
+
+    useInterval(() => {
+      if(!skipNextUpdate){
+        updateColor();
+    } else {
+        setSkipNextUpdate(false);
+    }
+    }, Time.Second);
   
     const onPress = ():void => {
       if(!active){
@@ -85,6 +101,7 @@ export default function ColorPad(props) {
           {gameState.blocked === player && (
               <Text style={styles.textWrapper}>⨉</Text>
           )}
+          <Text>{skipNextUpdate ? "SKIP" : ""}</Text>
       </Animatable.View>
   
       </Animatable.View>
