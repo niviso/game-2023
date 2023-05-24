@@ -14,6 +14,8 @@ const Color = {
     textSecondary: "#000000",
     backgroundColor: "#ffffff",
   },
+  black: "#000000",
+  white: "#ffffff"
 };
 
 const generateColor = ():string => {

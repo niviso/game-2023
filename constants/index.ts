@@ -9,5 +9,6 @@ import Theme from "./Theme";
 import Time from "./Time";
 import Screen from "./Screen";
 import Player from "./Player";
+import GameMode from "./GameMode";
 
-export { Audio, Color, Size, Font, generateColor, Image, Sound, Style, Screen, Theme, Time, Player };
+export { Audio, Color, Size, Font, generateColor,GameMode, Image, Sound, Style, Screen, Theme, Time, Player };

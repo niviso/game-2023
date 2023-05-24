@@ -79,10 +79,10 @@ export default function PlayerController(props){
     return (
           <View style={styles.wrapper}>
             <View style={styles.innerWrapper}>
-              <ColorPad gameState={gameState} player={player} active={active} _onClick={onClick} />
-              <ColorPad gameState={gameState} player={player} active={active} _onClick={onClick} />
-              <ColorPad gameState={gameState} player={player} active={active} _onClick={onClick} />
-              <ColorPad gameState={gameState} player={player} active={active} _onClick={onClick} />
+              <ColorPad gameState={gameState} player={player} active={active} onClick={onClick} />
+              <ColorPad gameState={gameState} player={player} active={active} onClick={onClick} />
+              <ColorPad gameState={gameState} player={player} active={active} onClick={onClick} />
+              <ColorPad gameState={gameState} player={player} active={active} onClick={onClick} />
             </View>
             <View style={styles.precentageBarWrapper}>
               <PrecentageBar gameState={gameState} player={player} onPressStop={blockPlayer} value={powerMeter} color={color}/>

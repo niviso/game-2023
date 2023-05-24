@@ -1,18 +1,19 @@
 import { View, Text, StyleSheet } from "react-native";
 import { useEffect,useRef,useState } from "react";
 import * as Animatable from 'react-native-animatable';
-import { Color, Screen, generateColor,Time } from "../../constants";
+import { Color, Screen, generateColor,Time,GameMode } from "../../constants";
+import { usePrevious } from "../../hooks";
 
 export default function ColorPad(props) {
-    const { _onClick, active, player, gameState } = props;
+    const { onClick, active, player, gameState } = props;
   
-    const [color, setColor] = useState(gameState.mode === "oneColor" ? "black" : generateColor());
-    const [seed,setSeed] = useState(0);
+    const [color, setColor] = useState<string>(Color.white);
+    const prevColor = usePrevious(color || "white");
+    const [seed,setSeed] = useState<number>(0);
     
-    const [skipNextUpdate,setSkipNextUpdate] = useState(false);
+    const [skipNextUpdate,setSkipNextUpdate] = useState<boolean>(false);
     const animatableRef = useRef<Animatable.View & View>(null); 
     const animatableWrapperRef = useRef<Animatable.View & View>(null); 
-    
     const getSeedColor = () => {
       if(seed == 0){
         setSeed(1);
@@ -29,35 +30,30 @@ export default function ColorPad(props) {
       }
     }
 
-    const animateColor = (from:string,to:string) => {
+    const animateColor = (from:string,to:string):void => {
+      console.log(from,to);
       animatableRef.current && animatableRef.current.animate({0: {backgroundColor: from},1: {backgroundColor: to}})
-
     }
     
-    const updateColor = () => {
-        const newColor = gameState.mode == "oneColor" ? getSeedColor() : generateColor();
+    const updateColor = ():void => {
+        const newColor = gameState.mode == GameMode.oneColor ? getSeedColor() : generateColor();
         if(newColor == color) {
           updateColor();
-          return;
         }
         animateColor(color,newColor);
         setColor(newColor);
-
     }
     useEffect(() => {
-      const nextTimeoutTime = gameState.mode == "oneColor" ? Time.Second : (Time.Second * 2);
-
-      setTimeout(() => {
+      const intervall = setInterval(() => {
         if(!skipNextUpdate){
             updateColor();
         } else {
             setSkipNextUpdate(false);
         }
-      }, nextTimeoutTime);
-    }, [color]);
-
-    useEffect(() => {
-      animateColor("white","black");
+      }, Time.Second);
+      return () => {
+        clearInterval(intervall);
+      }
     },[]);
   
     const onPress = ():void => {
@@ -67,7 +63,7 @@ export default function ColorPad(props) {
       animatableWrapperRef.current && animatableWrapperRef.current.animate({0:{transform: [{scale: 1}]},0.5:{transform: [{scale: 0.5}]},1:{transform: [{scale: 1}]}});
       updateColor();
       setSkipNextUpdate(true);
-      _onClick(color,player);
+      onClick(color,player);
     };
     const styles = StyleSheet.create({
         wrapper: {
@@ -79,7 +75,7 @@ export default function ColorPad(props) {
             justifyContent: "center",
             opacity: gameState.blocked === player ? 0.5 : 1
           },
-          textWrapper: {fontSize: 50,color: "white"}
+          textWrapper: {fontSize: 50,color: Color.white}
     });
     return (
       <Animatable.View ref={animatableWrapperRef} duration={250} onTouchStart={onPress}>

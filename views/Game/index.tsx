@@ -2,7 +2,7 @@ import { View,SafeAreaView, StyleSheet } from "react-native";
 import { Screen, Player } from "../../constants";
 import { useEffect, useState } from "react";
 import {startSound,normalSound,clockSound} from "../../helpers/SoundPlayer";
-import {PlayerController,CountDown,Clock} from "../../components";
+import {PlayerController,CountDown,Clock,ColorPad} from "../../components";
 
 
 
@@ -84,6 +84,7 @@ export default function Game({setCurrentPath}:any) {
     middleWrapperText: {fontSize: Screen.Width * 0.2, fontWeight: "100",color: "black"},
     playerWrapper: { width: "100%", height: "50%" }
   });
+  return <ColorPad gameState={gameState} active={true} player="P1" onClick={() => console.log("hej")}/>
   return ( 
     <SafeAreaView>
     <View style={styles.wrapper}>
