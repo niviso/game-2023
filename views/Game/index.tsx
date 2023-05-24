@@ -34,11 +34,9 @@ export default function Game({setCurrentPath}:any) {
   
   useEffect(() => {
     setTimeout(()=> {
-      if(countDown == 1){
-        setGameState({...gameState,mode: ""})
-      }
       if (countDown == 0) {
         setGameTime(60);
+        setGameState({...gameState,mode: ""})
         setTimeout(() => {
         setActive(true);
       },1000);
@@ -84,7 +82,7 @@ export default function Game({setCurrentPath}:any) {
     middleWrapperText: {fontSize: Screen.Width * 0.2, fontWeight: "100",color: "black"},
     playerWrapper: { width: "100%", height: "50%" }
   });
-  return <ColorPad gameState={gameState} active={true} player="P1" onClick={() => console.log("hej")}/>
+  //return <ColorPad gameState={gameState} active={true} player="P1" onClick={() => console.log("hej")}/>
   return ( 
     <SafeAreaView>
     <View style={styles.wrapper}>

@@ -58,7 +58,6 @@ export default function ColorPad(props) {
     const updateColor = ():void => {
         const newColor = gameState.mode == GameMode.oneColor ? getSeedColor() : generateColor();
         if(color === newColor) {
-          console.log("Girl same color try again");
           updateColor();
         }
         setColor(newColor);
@@ -70,7 +69,7 @@ export default function ColorPad(props) {
     } else {
         setSkipNextUpdate(false);
     }
-    }, Time.Second);
+    }, gameState.mode == GameMode.oneColor ? Time.Second : Time.Second * 2);
   
     const onPress = ():void => {
       if(!active){
