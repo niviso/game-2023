@@ -5,13 +5,12 @@ class SoundPlayer {
     loop: boolean;
     muted: boolean;
     ready: boolean;
-    constructor(audio,loop){
+    constructor(audio:any,loop:boolean){
       this.soundObj = null;
       this.audio = audio; 
       this.loop = loop;
       this.muted = false;
       this.ready = false;
-      console.log("constructor");
       this.init();
     }
     async init(){
@@ -21,9 +20,7 @@ class SoundPlayer {
       this.ready = true;
     }
     async play() {
-      console.log("PLAY");
       if(!this.ready){
-        console.log("NOT READY");
         return;
       }
       await this.soundObj.replayAsync();
@@ -31,15 +28,18 @@ class SoundPlayer {
         await this.soundObj.setIsLoopingAsync(true);
       }
     }
-    async setVolume(value){
+    async setVolume(value:number){
       await this.soundObj.setVolumeAsync(value);
   
     }
-    async setMute(value) {
+    async setMute(value:boolean) {
       await this.soundObj.setIsMutedAsync(value);
     }
     async destory(){
       await this.soundObj.unloadAsync();
+    }
+    async setPitch(value:number){
+        this.soundObj.setRateAsync(value,true,1);
     }
     
   }
@@ -48,6 +48,9 @@ class SoundPlayer {
   const startSound = new SoundPlayer(require("./start.mp3"),false);
   const normalSound = new SoundPlayer(require("./normal_layer.mp3"),true);
   const clockSound = new SoundPlayer(require("./bgm.mp3"),true);
-  const startBgmSound = new SoundPlayer(require("./start_bgm.mp3"),true);
-  export {stopSound,startSound,startBgmSound,normalSound,clockSound}
+  const startBgmSound = new SoundPlayer(require("./stop_layer.mp3"),true);
+  const pressSound = new SoundPlayer(require("./press.mp3"),false);
+  const failSound = new SoundPlayer(require("./fail.wav"),false);
+
+  export {failSound,stopSound,startSound,startBgmSound,normalSound,clockSound,pressSound}
   

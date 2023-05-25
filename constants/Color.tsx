@@ -14,6 +14,15 @@ const Color = {
     textSecondary: "#000000",
     backgroundColor: "#ffffff",
   },
+  black: "#000000",
+  white: "#ffffff"
 };
 
-export default Color;
+const generateColor = ():string => {
+  const obj = Color.primary.slots;
+  const keys = Object.keys(obj);
+  const color = keys[Math.floor(Math.random() * keys.length)];
+  return obj[color];
+};
+
+export {Color,generateColor};
