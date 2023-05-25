@@ -1,6 +1,15 @@
 import { OnboardFlow } from 'react-native-onboard';
 import {Image,Text} from "react-native";
+import {AsyncStorageHelper} from "../../helpers";
+
 export default function OnBoard({setCurrentPath}) {
+    const onDone = async () => {
+        await AsyncStorageHelper.set("onBoarding","1");
+        const result = await AsyncStorageHelper.get("onBoarding");
+        console.log(result);
+        setCurrentPath("Game");
+
+    }
     const stepOne = <Text>In this tutorial, we will walk you through the process of onboarding and getting started with a game for the first time. Whether youre a seasoned gamer or new to the gaming scene, this guide will help you navigate the initial stages and ensure a smooth and enjoyable gaming experience.</Text>
     const stepTwo = <Text style={{textAlign:"center"}}>Look at the colored squares below the upper circle and bar.
             {"\n\n"}
@@ -35,7 +44,7 @@ export default function OnBoard({setCurrentPath}) {
         }
         ]}
         type={'fullscreen'}
-        onDone={() => setCurrentPath("Game")}
+        onDone={onDone}
       />
     );
   };
