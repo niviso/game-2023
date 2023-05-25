@@ -50,7 +50,9 @@ export default function ColorPad(props) {
         return Color.primary.slots.slot_04;
       }
     }
-
+    useEffect(() => {
+      updateColor();
+    },[]);
     useEffect(() => {
       animatableRef.current && animatableRef.current.animate({0: {backgroundColor: prevColor},1: {backgroundColor: color}})
     },[color]);
@@ -93,14 +95,13 @@ export default function ColorPad(props) {
           textWrapper: {fontSize: 50,color: Color.white}
     });
     return (
-      <Animatable.View ref={animatableWrapperRef} duration={250} onTouchStart={onPress}>
-        <Animatable.View ref={animatableRef} duration={250}
+      <Animatable.View ref={animatableWrapperRef} duration={500} onTouchStart={onPress}>
+        <Animatable.View ref={animatableRef} duration={500}
           style={styles.wrapper}
         >
           {gameState.blocked === player && (
               <Text style={styles.textWrapper}>⨉</Text>
           )}
-          <Text>{skipNextUpdate ? "SKIP" : ""}</Text>
       </Animatable.View>
   
       </Animatable.View>
