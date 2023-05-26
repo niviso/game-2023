@@ -1,6 +1,6 @@
-import { View,SafeAreaView, StyleSheet } from "react-native";
+import { View,SafeAreaView, StyleSheet,AppState,Text } from "react-native";
 import { Screen, Player,Time, GameMode } from "../../constants";
-import { useEffect, useState } from "react";
+import { useEffect, useState,useRef } from "react";
 import {startSound,normalSound,clockSound} from "../../helpers/SoundPlayer";
 import {PlayerController,CountDown,Clock} from "../../components";
 
@@ -10,7 +10,7 @@ import {PlayerController,CountDown,Clock} from "../../components";
 export default function Game({setCurrentPath}:any) {
   const [active,setActive] = useState<boolean>(false);
   const [countDown,setCountDown] = useState<number>(3);
-  const [gameState,setGameState] = useState<any>({mode: GameMode.oneColor,blocked: null});
+  const [gameState,setGameState] = useState<any>({mode: GameMode.oneColor,blocked: null,paused:true});
   const [gameTime,setGameTime] = useState<number>(0);
 
   useEffect(() => {
@@ -22,6 +22,29 @@ export default function Game({setCurrentPath}:any) {
   }
 }
   },[clockSound.ready]);
+
+
+  const appState = useRef(AppState.currentState);
+  const [appStateVisible, setAppStateVisible] = useState(appState.current);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === 'active'
+      ) {
+        console.log('App has come to the foreground!');
+      }
+
+      appState.current = nextAppState;
+      setAppStateVisible(appState.current);
+      console.log('AppState', appState.current);
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   useEffect(() => {
     if(clockSound.ready){
@@ -48,6 +71,7 @@ export default function Game({setCurrentPath}:any) {
   useEffect(() => {
     if(countDown == 0){
       setTimeout(()=> {
+
         if (gameTime == 0) {
           setCurrentPath("Score");
         } else {
@@ -83,6 +107,7 @@ export default function Game({setCurrentPath}:any) {
     playerWrapper: { width: "100%", height: "50%" }
   });
   //return <ColorPad gameState={gameState} active={true} player="P1" onClick={() => console.log("hej")}/>
+  return <Text style={{padding: 50}}>{gameState.paused ? "PAUSED" : "NO PAUS"}</Text>
   return ( 
     <SafeAreaView>
     <View style={styles.wrapper}>
