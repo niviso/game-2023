@@ -1,9 +1,9 @@
-import { View,SafeAreaView, StyleSheet,AppState,Text } from "react-native";
+import { View,SafeAreaView, StyleSheet,AppState } from "react-native";
 import { Screen, Player,Time, GameMode } from "../../constants";
 import { useEffect, useState,useRef } from "react";
 import {startSound,normalSound,clockSound} from "../../helpers/SoundPlayer";
 import {PlayerController,CountDown,Clock} from "../../components";
-
+import {useInterval} from "../../helpers";
 
 
 
@@ -25,6 +25,7 @@ export default function Game({setCurrentPath}:any) {
   },[clockSound.ready]);
 
   useEffect(() => {
+    //Make into custom hook
     const subscription = AppState.addEventListener('change', nextAppState => {
       if (
         appState.current.match(/inactive|background/) &&
@@ -77,6 +78,7 @@ export default function Game({setCurrentPath}:any) {
     }
   }, [gameTime]);
 
+
   useEffect(() => {
     if(gameState.blocked){
       setTimeout(() => {
@@ -103,7 +105,6 @@ export default function Game({setCurrentPath}:any) {
     playerWrapper: { width: "100%", height: "50%" }
   });
   //return <ColorPad gameState={gameState} active={true} player="P1" onClick={() => console.log("hej")}/>
-  return <Text style={{padding: 50}}>{gameState.paused ? "PAUSED" : "NO PAUS"}</Text>
   return ( 
     <SafeAreaView>
     <View style={styles.wrapper}>
