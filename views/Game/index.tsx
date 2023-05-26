@@ -10,8 +10,9 @@ import {PlayerController,CountDown,Clock} from "../../components";
 export default function Game({setCurrentPath}:any) {
   const [active,setActive] = useState<boolean>(false);
   const [countDown,setCountDown] = useState<number>(3);
-  const [gameState,setGameState] = useState<any>({mode: GameMode.oneColor,blocked: null,paused:true});
+  const [gameState,setGameState] = useState<any>({mode: GameMode.oneColor,blocked: null,paused:false});
   const [gameTime,setGameTime] = useState<number>(0);
+  const appState = useRef(AppState.currentState);
 
   useEffect(() => {
     if(clockSound.ready){
@@ -23,22 +24,17 @@ export default function Game({setCurrentPath}:any) {
 }
   },[clockSound.ready]);
 
-
-  const appState = useRef(AppState.currentState);
-  const [appStateVisible, setAppStateVisible] = useState(appState.current);
-
   useEffect(() => {
     const subscription = AppState.addEventListener('change', nextAppState => {
       if (
         appState.current.match(/inactive|background/) &&
         nextAppState === 'active'
       ) {
-        console.log('App has come to the foreground!');
+        setGameState({...gameState,paused:true});
+      } else if(appState.current == 'active') {
+        setGameState({...gameState,paused:false});
       }
-
       appState.current = nextAppState;
-      setAppStateVisible(appState.current);
-      console.log('AppState', appState.current);
     });
 
     return () => {
