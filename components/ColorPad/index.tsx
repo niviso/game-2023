@@ -19,6 +19,7 @@ export default function ColorPad(props) {
     const animatableRef = useRef<Animatable.View & View>(null); 
     const animatableWrapperRef = useRef<Animatable.View & View>(null); 
     const getSeedColor = () => {
+      console.log("SEED",Math.random());
       if(seed == 0){
         setSeed(1);
         return Color.primary.slots.slot_01;
@@ -41,6 +42,9 @@ export default function ColorPad(props) {
     },[color]);
     
     const updateColor = ():void => {
+        if(gameState.paused){
+          return;
+        }
         const newColor = gameState.mode == GameMode.oneColor ? getSeedColor() : generateColor();
         if(color === newColor) {
           updateColor();
@@ -49,11 +53,11 @@ export default function ColorPad(props) {
     }
 
     useInterval(() => {
-      if(!skipNextUpdate){
-        updateColor();
-    } else {
-        setSkipNextUpdate(false);
-    }
+        if(!skipNextUpdate){
+          updateColor();
+        } else {
+          setSkipNextUpdate(false);
+        }
     }, gameState.mode == GameMode.oneColor ? Time.getSecondsInMs(1) : Time.getSecondsInMs(2));
   
     const onPress = ():void => {
