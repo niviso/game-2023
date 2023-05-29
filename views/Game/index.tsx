@@ -98,12 +98,14 @@ export default function Game({setCurrentPath}:any) {
   },[gameState]);
 
   useInterval(() => {
+    if(!gameState.paused){
     if(countDown === 0){
       setGameTime(Time.getMinutes(1));
       setActive(true);
       setGameState((prevState) => ({...prevState,mode: GameMode.none}));
     }
     setCountDown((prevCountDown) => (prevCountDown - 1));
+    }
   },countDown === -1 ? null : Time.getSecondsInMs(Time.second));
 
   useInterval(() => {
