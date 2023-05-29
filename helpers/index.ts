@@ -1,3 +1,4 @@
 import AsyncStorageHelper from "./AsyncStorageHelper";
 import MathHelper from "./MathHelper";
-export { AsyncStorageHelper,MathHelper };
+import useInterval from "./UseInterval";
+export { AsyncStorageHelper,MathHelper,useInterval };

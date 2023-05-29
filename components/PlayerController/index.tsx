@@ -6,6 +6,7 @@ import * as Animatable from 'react-native-animatable';
 import {failSound,stopSound,normalSound,pressSound} from "../../helpers/SoundPlayer";
 import PrecentageBar from "../PrecentageBar";
 import ColorPad from "../ColorPad";
+import {useInterval} from "../../helpers";
 
 export default function PlayerController(props){
     const { player,active,setGameState,gameState } = props;
@@ -37,20 +38,19 @@ export default function PlayerController(props){
         pressSound.play();
       }
     };
-  
-    useEffect(() => {
-      let intervall = setInterval(()=> {
+
+    useInterval(() => {
+      if(!gameState.paused){
         if (time == 0) {
           setColor(generateColor());
           setTime(MathHelper.randomIntFromInterval(1, 5));
         } else {
           setTime(time - 1);
         }
-      }, 1000);
-      return () => {
-        clearInterval(intervall);
-      };
-    }, [time]);
+      }
+    },1000);
+  
+    
   
     const styles = StyleSheet.create({
       wrapper: {
