@@ -1,7 +1,7 @@
 const data = [
     {
         title: "Music",
-        description: "Special thanks to the incredible music producers for their outstanding contributions that have brought our game to life with their extraordinary compositions.",
+        description: "CC BY 4.0",
         items: [{
             headline: "anomalous_underdog",
             description: "Slowdown_Short_Down.wav",
@@ -23,17 +23,14 @@ const data = [
         description: "I want to extend my heartfelt gratitude to all the dedicated individuals who have contributed their time, talent, and support, making this game possible.",
         items: [
         {
-            headline: "Kalle andersson",
-            description: "",
-        },
-        {
             headline: "Anders Moberg",
             description: "",
         },
         {
-            headline: "Annika Moberg",
-            description: "",
-        },
+            headline: "Tretton37",
+            description: "Website",
+            link: "https://www.tretton37.com/"
+        }
         ]
     }
 ];

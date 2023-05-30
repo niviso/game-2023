@@ -19,7 +19,6 @@ export default function ColorPad(props) {
     const animatableRef = useRef<Animatable.View & View>(null); 
     const animatableWrapperRef = useRef<Animatable.View & View>(null); 
     const getSeedColor = () => {
-      console.log("SEED",Math.random());
       if(seed == 0){
         setSeed(1);
         return Color.primary.slots.slot_01;

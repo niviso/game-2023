@@ -29,9 +29,8 @@ export default function Credits({ setCurrentPath }) {
       fontSize: 20,   
     },
     textTitle: {
-      color: "black",
+      color: "white",
       fontSize: 30,
-      backgroundColor: "white",
       padding: 10,
       textAlign: "center",
       marginBottom: 10
