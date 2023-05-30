@@ -33,7 +33,7 @@ function Pause({active,setGameState}:any){
   ) : null
 }
 
-export default function Game({setCurrentPath}:any) {
+export default function Game({route,setRoute}:any) {
   const [active,setActive] = useState<boolean>(false);
   const [countDown,setCountDown] = useState<number>(3);
   const [gameState,setGameState] = useState<any>({mode: GameMode.oneColor,blocked: null,paused:false});
@@ -112,7 +112,7 @@ export default function Game({setCurrentPath}:any) {
     if(countDown == -1){
       setTimeout(()=> {
         if (gameTime == 0) {
-          setCurrentPath("Score");
+          setRoute({path:"Score",data:{}});
         } else {
           !gameState.paused && setGameTime(gameTime - 1);
         }
@@ -145,10 +145,10 @@ export default function Game({setCurrentPath}:any) {
       </View>
 
         <View style={styles.playerWrapper}>
-          <PlayerController setGameState={setGameState} gameState={gameState} active={active} player={Player.One} />
+          <PlayerController setGameState={setGameState} gameState={gameState} active={active} player={Player.One} ai={route.data.solo ? false : true} />
         </View>
         <View style={styles.playerWrapper}>
-          <PlayerController setGameState={setGameState} gameState={gameState} active={active} player={Player.Two} />
+          <PlayerController setGameState={setGameState} gameState={gameState} active={active} player={Player.Two} ai={false} />
         </View>
       </View>
     </View>

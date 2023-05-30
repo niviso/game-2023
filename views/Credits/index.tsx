@@ -1,9 +1,8 @@
 import { View, Text,StyleSheet,Linking,TouchableOpacity,SafeAreaView } from "react-native";
 import data from "./data";
-import * as Animatable from 'react-native-animatable';
 import { NavigationButton } from "../../components";
 import { Direction,generateColor } from "../../constants";
-export default function Credits({ setCurrentPath }) {
+export default function Credits({ setRoute }) {
   const styles = StyleSheet.create({
     wrapper:{
       width: "100%",
@@ -72,7 +71,7 @@ export default function Credits({ setCurrentPath }) {
           })
         }
         </View>
-        <NavigationButton title="back" direction={Direction.Left} shadowColor={generateColor} onClick={() => setCurrentPath("Start")}/>
+        <NavigationButton title="back" direction={Direction.Left} shadowColor={generateColor} onClick={() => setRoute({path:"Start",data:{}})}/>
       </SafeAreaView>
       </View>
   );

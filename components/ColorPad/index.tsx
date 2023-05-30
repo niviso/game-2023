@@ -2,7 +2,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { useEffect,useRef,useState } from "react";
 import * as Animatable from 'react-native-animatable';
 import {useInterval} from "../../helpers";
-import { Color, Screen, generateColor,Time,GameMode } from "../../constants";
+import { Color, Screen, generateColor,Time,GameMode,Player } from "../../constants";
 import { usePrevious } from "../../hooks";
 
 
@@ -39,6 +39,10 @@ export default function ColorPad(props) {
     useEffect(() => {
       animatableRef.current && animatableRef.current.animate({0: {backgroundColor: prevColor},1: {backgroundColor: color}})
     },[color]);
+
+    useInterval(() => {
+      onPress();
+    },player === Player.Ai ? 1000 : null);
     
     const updateColor = ():void => {
         if(gameState.paused){
