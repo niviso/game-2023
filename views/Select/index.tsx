@@ -1,37 +1,55 @@
-import { View, Text, Pressable } from "react-native";
-import { Style, Color } from "../../constants";
+import { View, TouchableOpacity } from "react-native";
+import { generateColor } from "../../constants";
+import * as Animatable from 'react-native-animatable';
+import {AsyncStorageHelper} from "../../helpers";
 
-export default function Select({ appState, setAppState }) {
+export default function Select({ setCurrentPath }) {
+  const color = generateColor();
+  const goToGame = async () => {
+    const hasOnBoarded = await AsyncStorageHelper.get("onBoarding");
+    if(hasOnBoarded == "1") {
+      setCurrentPath("Game");
+    } else {
+      setCurrentPath("OnBoarding");
+    }
+  }
   return (
     <View style={{ width: "100%", height: "100%" }}>
-      <Pressable
-        onPress={() => setAppState({ ...appState, path: "game" })}
+      <TouchableOpacity
+        onPress={goToGame}
         style={{
-          ...Style.flexCenter,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
           width: "100%",
           height: "50%",
-          backgroundColor: Color["primary"].slot_03,
+          backgroundColor: "white",
+          transform: [{rotate:'90deg'}]
         }}
       >
-        <Text
-          style={{ fontSize: 70, transform: "rotate(90deg)", color: "white" }}
+        <Animatable.Text
+        animation="wobble" iterationCount="infinite" duration={2000} delay={2000}
+          style={{ fontSize: 70, color: color }}
         >
           Versus
-        </Text>
-      </Pressable>
-      <Pressable
-        onPress={() => setAppState({ ...appState, path: "game" })}
+        </Animatable.Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={goToGame}
         style={{
-          ...Style.flexCenter,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
           width: "100%",
           height: "50%",
-          background: "white",
+          backgroundColor: color,
+
         }}
       >
-        <Text style={{ fontSize: 70, color: Color["primary"].slot_03 }}>
+        <Animatable.Text animation="wobble" iterationCount="infinite" duration={2000} delay={1000} style={{ fontSize: 70, color: "white" }}>
           Solo
-        </Text>
-      </Pressable>
+        </Animatable.Text>
+      </TouchableOpacity>
     </View>
   );
 }

@@ -3,7 +3,6 @@ import { Style,generateColor } from "../../constants";
 import * as Animatable from 'react-native-animatable';
 import {startBgmSound} from "../../helpers/SoundPlayer";
 import {useEffect} from "react";
-import {AsyncStorageHelper} from "../../helpers";
 
 export default function Start({setCurrentPath}) {
   const color = generateColor();
@@ -15,17 +14,12 @@ export default function Start({setCurrentPath}) {
   }
 }
   },[startBgmSound.ready]);
-  const goToGame = async () => {
-    const hasOnBoarded = await AsyncStorageHelper.get("onBoarding");
-    if(hasOnBoarded == "1") {
-      setCurrentPath("Game");
-    } else {
-      setCurrentPath("OnBoarding");
-    }
+  const goToSelect = async () => {
+    setCurrentPath("Select")
   }
   return (
     <>
-    <TouchableOpacity onPress={goToGame} style={Style.fillScreen}>
+    <TouchableOpacity onPress={goToSelect} style={Style.fillScreen}>
       <Animatable.View duration={2000}
         style={{
           ...Style.flexCenter,
