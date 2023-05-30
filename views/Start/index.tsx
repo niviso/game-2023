@@ -24,6 +24,7 @@ export default function Start({setCurrentPath}) {
     }
   }
   return (
+    <>
     <TouchableOpacity onPress={goToGame} style={Style.fillScreen}>
       <Animatable.View duration={2000}
         style={{
@@ -52,5 +53,7 @@ export default function Start({setCurrentPath}) {
           </Animatable.Text>
       </Animatable.View>
     </TouchableOpacity>
+    <Animatable.View onTouchStart={() => setCurrentPath("Credits")} style={{position: "absolute",bottom: 25,right: 25, backgroundColor: "white",padding: 10}}><Animatable.Text animation="pulse" iterationCount="infinite" duration={1000} delay={1000} style={{fontSize: 18,color: color}}>CREDITS</Animatable.Text></Animatable.View>
+    </>
   );
 }

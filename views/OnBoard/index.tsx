@@ -6,7 +6,6 @@ export default function OnBoard({setCurrentPath}) {
     const onDone = async () => {
         await AsyncStorageHelper.set("onBoarding","1");
         const result = await AsyncStorageHelper.get("onBoarding");
-        console.log(result);
         setCurrentPath("Game");
 
     }
