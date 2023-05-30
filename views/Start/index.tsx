@@ -6,14 +6,14 @@ import {useEffect} from "react";
 
 export default function Start({route,setRoute}) {
   const color = generateColor();
-  useEffect(() => {
+  /*useEffect(() => {
     if(startBgmSound.ready){
     startBgmSound.play();
   return () => {
     startBgmSound.destory();
   }
 }
-  },[startBgmSound.ready]);
+  },[startBgmSound.ready]);*/
   const goToSelect = async () => {
     setRoute({path:"Select",data:{}});
   }
