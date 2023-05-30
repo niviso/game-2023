@@ -1,5 +1,6 @@
 import Audio from "./Audio";
 import {Color,generateColor} from "./Color";
+import Direction from "./Direction";
 import Size from "./Size";
 import Font from "./Font";
 import Image from "./Image";
@@ -11,4 +12,4 @@ import Screen from "./Screen";
 import Player from "./Player";
 import GameMode from "./GameMode";
 
-export { Audio, Color, Size, Font, generateColor,GameMode, Image, Sound, Style, Screen, Theme, Time, Player };
+export { Audio, Color,Direction, Size, Font, generateColor,GameMode, Image, Sound, Style, Screen, Theme, Time, Player };
