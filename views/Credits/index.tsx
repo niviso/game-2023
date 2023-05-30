@@ -1,5 +1,7 @@
 import { View, Text,StyleSheet,Linking,TouchableOpacity,SafeAreaView } from "react-native";
 import data from "./data";
+import * as Animatable from 'react-native-animatable';
+
 export default function Credits({ setCurrentPath }) {
   const styles = StyleSheet.create({
     wrapper:{
@@ -69,7 +71,7 @@ export default function Credits({ setCurrentPath }) {
           })
         }
         </View>
-        <TouchableOpacity onPress={() => setCurrentPath("Start")} style={{width: "100%",display: "flex",alignItems: "center",justifyContent: "center"}}><Text style={{fontSize: 22,color: "white"}}>GO BACK</Text></TouchableOpacity>
+        <Animatable.View animation="slideInUp" duration={500} onTouchStart={() => setCurrentPath("Start")} style={{position: "absolute",bottom: 0,left: 0, backgroundColor: "white",width: 140,height:80,display: "flex",alignItems:"center",justifyContent:"center",shadowColor: '#77ADFF',shadowOffset: {width: 0, height: 0},shadowOpacity: 1,shadowRadius: 20,borderTopRightRadius: 10}}><Animatable.Text animation="pulse" iterationCount="infinite" duration={1000} delay={1000} style={{fontSize: 20,color: "black"}}>BACK</Animatable.Text></Animatable.View>
 
       </SafeAreaView>
       </View>
