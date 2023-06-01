@@ -36,6 +36,7 @@ export default function ColorPad(props) {
     useEffect(() => {
       updateColor();
     },[]);
+    
     useEffect(() => {
       animatableRef.current && animatableRef.current.animate({0: {backgroundColor: prevColor},1: {backgroundColor: color}})
     },[color]);
@@ -43,6 +44,7 @@ export default function ColorPad(props) {
     useInterval(() => {
       onPress();
     },player === Player.Ai ? 1000 : null);
+
     
     const updateColor = ():void => {
         if(gameState.paused){

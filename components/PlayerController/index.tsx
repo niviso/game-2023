@@ -11,7 +11,7 @@ import {useInterval} from "../../helpers";
 export default function PlayerController(props){
     const { player,active,setGameState,gameState } = props;
     const [points,setPoints] = useState<number>(0);
-    const [powerMeter,setPowerMeter] = useState<number>(100);
+    const [powerMeter,setPowerMeter] = useState<number>(0);
     const [time,setTime] = useState<number>(MathHelper.randomIntFromInterval(2, 10));
     const [color,setColor] = useState<string>(generateColor());
     const animatableRef = useRef<Animatable.View & View>(null); 
