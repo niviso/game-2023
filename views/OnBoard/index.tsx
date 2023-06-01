@@ -2,11 +2,11 @@ import { OnboardFlow } from 'react-native-onboard';
 import {Image,Text} from "react-native";
 import {AsyncStorageHelper} from "../../helpers";
 
-export default function OnBoard({setCurrentPath}) {
+export default function OnBoard({setRoute}) {
     const onDone = async () => {
         await AsyncStorageHelper.set("onBoarding","1");
         const result = await AsyncStorageHelper.get("onBoarding");
-        setCurrentPath("Game");
+        setRoute({path:"Game",data:{}});
 
     }
     const stepOne = <Text>In this tutorial, we will walk you through the process of onboarding and getting started with a game for the first time. Whether youre a seasoned gamer or new to the gaming scene, this guide will help you navigate the initial stages and ensure a smooth and enjoyable gaming experience.</Text>

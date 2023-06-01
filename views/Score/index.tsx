@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-export default function Score({ setCurrentPath }) {
+export default function Score({ setRoute }) {
   return (
     <View>
       <Text>

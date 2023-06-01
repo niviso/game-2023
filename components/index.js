@@ -5,6 +5,7 @@ import Link from "./link";
 import ColorPad from "./ColorPad";
 import PrecentageBar from "./PrecentageBar";
 import PlayerController from "./PlayerController";
+import NavigationButton from "./NavigationButton";
 
 export {
   CountDown,
@@ -14,4 +15,5 @@ export {
   Link,
   PrecentageBar,
   PlayerController,
+  NavigationButton,
 };

@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 import { generateColor, Screen, Player } from "../../constants";
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { MathHelper } from '../../helpers';
 import * as Animatable from 'react-native-animatable';
 import {failSound,stopSound,normalSound,pressSound} from "../../helpers/SoundPlayer";
@@ -15,7 +15,7 @@ export default function PlayerController(props){
     const [time,setTime] = useState<number>(MathHelper.randomIntFromInterval(2, 10));
     const [color,setColor] = useState<string>(generateColor());
     const animatableRef = useRef<Animatable.View & View>(null); 
-  
+    const ammountOfColorPads:number = 4; 
   
     const onClick = (clickColor:string,player:string)=> {
       
@@ -75,7 +75,7 @@ export default function PlayerController(props){
       setPowerMeter(0);
       setGameState({...gameState,blocked: player === Player.One ? Player.Two : Player.One})
     }
-  
+    //Refactor colorpad to a forloop
     return (
           <View style={styles.wrapper}>
             <View style={styles.innerWrapper}>
