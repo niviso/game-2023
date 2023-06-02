@@ -36,7 +36,7 @@ const en = {
 
       },
       game:{
-        resume: "Resume"
+        resume: "RESUME"
 
       },
     },

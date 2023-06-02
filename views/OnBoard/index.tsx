@@ -1,5 +1,5 @@
 import { OnboardFlow } from 'react-native-onboard';
-import {Image,Text} from "react-native";
+import {Image} from "react-native";
 import {AsyncStorageHelper} from "../../helpers";
 import i18n from "../../locales";
 
