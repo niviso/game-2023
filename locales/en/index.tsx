@@ -9,7 +9,9 @@ const en = {
       }
     },
     button: {
-      credits: "CREDITS"
+      credits: "CREDITS",
+      back: "BACK",
+      tutorial: "TUTORIAL"
     }
   }
 

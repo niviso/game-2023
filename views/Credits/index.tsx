@@ -2,6 +2,7 @@ import { View, Text,StyleSheet,Linking,TouchableOpacity,SafeAreaView } from "rea
 import data from "./data";
 import { NavigationButton } from "../../components";
 import { Direction,generateColor } from "../../constants";
+import i18n from "../../locales";
 export default function Credits({ setRoute }) {
   const styles = StyleSheet.create({
     wrapper:{
@@ -71,7 +72,7 @@ export default function Credits({ setRoute }) {
           })
         }
         </View>
-        <NavigationButton title="back" direction={Direction.Left} shadowColor={generateColor} onClick={() => setRoute({path:"Start",data:{}})}/>
+        <NavigationButton title={i18n.t("button.back")} direction={Direction.Left} shadowColor={generateColor} onClick={() => setRoute({path:"Start",data:{}})}/>
       </SafeAreaView>
       </View>
   );
