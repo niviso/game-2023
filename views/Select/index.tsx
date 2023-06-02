@@ -1,7 +1,9 @@
 import { View, TouchableOpacity } from "react-native";
-import { generateColor } from "../../constants";
+import { generateColor,Direction } from "../../constants";
 import * as Animatable from 'react-native-animatable';
 import {AsyncStorageHelper} from "../../helpers";
+import i18n from "../../locales";
+import {NavigationButton} from "../../components";
 
 export default function Select({ setRoute }) {
   const color = generateColor();
@@ -31,7 +33,7 @@ export default function Select({ setRoute }) {
         animation="wobble" iterationCount="infinite" duration={2000} delay={2000}
           style={{ fontSize: 70, color: color }}
         >
-          Versus
+          {i18n.t('view.select.vs')}
         </Animatable.Text>
       </TouchableOpacity>
       <TouchableOpacity
@@ -48,15 +50,11 @@ export default function Select({ setRoute }) {
       >
 
         <Animatable.Text animation="wobble" iterationCount="infinite" duration={2000} delay={1000} style={{ fontSize: 70, color: "white" }}>
-          Solo
+        {i18n.t('view.select.solo')}
         </Animatable.Text>
       </TouchableOpacity>
-      <Animatable.View animation="slideInUp" duration={500} onTouchStart={() => setRoute({path:"Start"})} style={{position: "absolute",shadowColor: '#171717',shadowOffset: {width: 0, height: 4},shadowOpacity: 0.5,shadowRadius: 5,borderTopRightRadius:10,display: "flex",alignItems:"center",justifyContent:"center",bottom:0,left:0,width: 140,height: 80,backgroundColor: "white",zIndex:99}}>
-      <Animatable.Text animation="pulse" iterationCount="infinite" duration={1000} delay={1000} style={{fontSize: 20,color: color}}>BACK</Animatable.Text>
-    </Animatable.View>
-    <Animatable.View animation="slideInUp" duration={500} onTouchStart={() => setRoute({path:"OnBoard"})} style={{position: "absolute",shadowColor: '#171717',shadowOffset: {width: 0, height: 4},shadowOpacity: 0.5,shadowRadius: 5,borderTopLeftRadius:10,display: "flex",alignItems:"center",justifyContent:"center",bottom:0,right:0,width: 140,height: 80,backgroundColor: "white",zIndex:99}}>
-    <Animatable.Text animation="pulse" iterationCount="infinite" duration={1000} delay={1000} style={{fontSize: 20,color: color}}>TUTORIAL</Animatable.Text>
-    </Animatable.View>
+    <NavigationButton onClick={() => setRoute({path:"Start"})} textColor={color} title={i18n.t('button.back')} direction={Direction.Left}/>
+    <NavigationButton onClick={() => setRoute({path:"OnBoard"})} textColor={color} title={i18n.t('button.tutorial')} direction={Direction.Right}/>
     </View>
   );
 }

@@ -4,8 +4,7 @@ import { useEffect, useState,useRef } from "react";
 import {startSound,normalSound,clockSound} from "../../helpers/SoundPlayer";
 import {PlayerController,CountDown,Clock} from "../../components";
 import {useInterval} from "../../helpers";
-
-
+import i18n from "../../locales";
 
 function Pause({active,setGameState}:any){
   const styles = StyleSheet.create({
@@ -27,7 +26,7 @@ function Pause({active,setGameState}:any){
   return active ? (
     <View style={styles.wrapper}>
       <TouchableOpacity style={styles.button} onPress={() => setGameState((prevState) => ({...prevState,paused:false}))}>
-      <Text style={{fontSize: 50,fontWeight: "bold",color: Color.white}}>RESUME</Text>
+      <Text style={{fontSize: 50,fontWeight: "bold",color: Color.white}}>{i18n.t("view.game.resume")}</Text>
       </TouchableOpacity>
     </View>
   ) : null

@@ -3,7 +3,9 @@ import { Style,generateColor } from "../../constants";
 import * as Animatable from 'react-native-animatable';
 import {startBgmSound} from "../../helpers/SoundPlayer";
 import {useEffect} from "react";
-
+import i18n from "../../locales";
+import { Direction } from "../../constants";
+import {NavigationButton} from "../../components";
 export default function Start({route,setRoute}) {
   const color = generateColor();
   /*useEffect(() => {
@@ -40,14 +42,14 @@ export default function Start({route,setRoute}) {
             borderRadius: 20,
           }}
         >
-          COLOR FIGHT
+          {i18n.t('view.start.title')}
         </Animatable.Text>
           <Animatable.Text animation="pulse" iterationCount="infinite" duration={1000} delay={1000} style={{ color: "white", marginTop: 25, fontSize: 25 }}>
-            Press anywhere to start
+          {i18n.t('view.start.subTitle')}
           </Animatable.Text>
       </Animatable.View>
     </TouchableOpacity>
-    <Animatable.View animation="slideInUp" duration={500} onTouchStart={() => setRoute({path:"Credits",data:{}})} style={{position: "absolute",bottom: 0,right: 0, backgroundColor: "white",width: 140,height:80,display: "flex",alignItems:"center",justifyContent:"center",shadowColor: '#171717',shadowOffset: {width: 0, height: 4},shadowOpacity: 0.5,shadowRadius: 5,borderTopLeftRadius: 10}}><Animatable.Text animation="pulse" iterationCount="infinite" duration={1000} delay={1000} style={{fontSize: 20,color: color}}>CREDITS</Animatable.Text></Animatable.View>
+    <NavigationButton onClick={() => setRoute({path:"Credits",data:{}})} textColor={color} title={i18n.t('button.credits')} direction={Direction.Right}/>
     </>
   );
 }

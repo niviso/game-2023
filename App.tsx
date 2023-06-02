@@ -5,7 +5,7 @@ import { Start, Select, Game, Score, Credits, Settings, OnBoard } from "./views"
 export default function App() {
   const [route,setRoute] = useState({path: "Start",data:{}});
   const paths = [Start, Select, Game, Score, Credits, Settings,OnBoard];
-
+  
   return ( 
     <AppProvider>
       <StatusBar hidden />
