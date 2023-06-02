@@ -1,17 +1,14 @@
 import * as Animatable from 'react-native-animatable';
 import { StyleSheet } from "react-native";
-import { Color } from "../../constants";
+import { Color,Direction } from "../../constants";
 
-enum Direction{
-    Left = "Left",
-    Right = "Right"
-}
 export default function NavigationButton({onClick,direction,title,shadowColor,textColor}:any){
     const styles = StyleSheet.create({
         wrapper: {
             position: "absolute",
             bottom: 0,
-            left: 0,
+            left: direction === Direction.Left ? 0 : null,
+            right: direction === Direction.Right ? 0 : null,
             backgroundColor: Color.white,
             width: 140,
             height:80,
@@ -20,8 +17,8 @@ export default function NavigationButton({onClick,direction,title,shadowColor,te
             justifyContent:"center",
             shadowColor: shadowColor || Color.black,
             shadowOffset: {width: 0,height: 0},
-            shadowOpacity: 1,
-            shadowRadius: 20,
+            shadowOpacity: 0.5,
+            shadowRadius: 10,
             borderTopLeftRadius: direction === Direction.Right ? 10 : 0,
             borderTopRightRadius: direction === Direction.Left ? 10 : 0
         },
