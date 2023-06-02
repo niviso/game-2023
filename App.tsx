@@ -3,7 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import {useState} from "react";
 import { Start, Select, Game, Score, Credits, Settings, OnBoard } from "./views";
 export default function App() {
-  const [route,setRoute] = useState({path: "Start",data:{}});
+  const [route,setRoute] = useState({path: "Score",data:{}});
   const paths = [Start, Select, Game, Score, Credits, Settings,OnBoard];
   
   return ( 
