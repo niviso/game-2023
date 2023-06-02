@@ -6,6 +6,19 @@ const en = {
       start:{
         title: "COLOR FIGHT",
         subTitle: "Press anywhere to start"
+      },
+      select:{
+        solo: "Solo",
+        vs: "Versus"
+      },
+      credits:{
+
+      },
+      tutorial:{
+
+      },
+      game:{
+
       }
     },
     button: {
