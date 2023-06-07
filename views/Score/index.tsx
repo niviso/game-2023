@@ -1,7 +1,8 @@
 import { View, Text,SafeAreaView } from "react-native";
 import * as Animatable from 'react-native-animatable';
 import {useInterval} from "../../helpers";
-import { useState,useEffect,useRef } from "react";
+import { useState,useRef } from "react";
+import i18n from "../../locales";
 
 export default function Score({ data,setRoute }) {
   const [scoreData,setScoreData] = useState({playerOneWinner: false,playerTwoWinner: false});
@@ -56,9 +57,9 @@ export default function Score({ data,setRoute }) {
     }
     return (
       <View style={{display: "flex",flexDirection:"column",alignItems:"center",justifyContent: "flex-end",height: 200}}>
-        {(points === currentPoints && isWinner) && <Animatable.Text animation="bounceIn" style={{fontSize: 60,color: "green",marginBottom: 10}}>WINNER</Animatable.Text>}
-        {(points === currentPoints && !isWinner) && <Animatable.Text animation="bounceIn" style={{fontSize: 60,color: "red",marginBottom: 10}}>LOOSER</Animatable.Text>}
-        <Animatable.View ref={animatableRef} animation="bounceIn" duration={1000} style={{width: 200,height: 200,backgroundColor: "black",display: "flex",alignItems:"center",justifyContent:"center",borderRadius: "100%"}}>
+        {(points === currentPoints && isWinner) && <Animatable.Text animation="bounceIn" style={{fontSize: 60,color: "green",marginBottom: 10}}>{i18n.t("view.score.winner")}</Animatable.Text>}
+        {(points === currentPoints && !isWinner) && <Animatable.Text animation="bounceIn" style={{fontSize: 60,color: "red",marginBottom: 10}}>{i18n.t("view.score.looser")}</Animatable.Text>}
+        <Animatable.View ref={animatableRef} onTouchStart={() => animatableRef.current && currentPoints === points && animatableRef.current.pulse()} animation="bounceIn" duration={1000} style={{width: 200,height: 200,backgroundColor: "black",display: "flex",alignItems:"center",justifyContent:"center",borderRadius: "100%"}}>
           <Text style={{fontSize: 100,color: "white"}}>{currentPoints}</Text>
         </Animatable.View>
         
@@ -71,9 +72,18 @@ export default function Score({ data,setRoute }) {
       <View style={{transform:[{rotateZ: "180deg"}]}}>
         <CountUp onFinish={onFinish} points={20} isWinner={true}/>
       </View>
-      <Animatable.View onTouchStart={() => setRoute({path: "Game",data:{}})} animation="rotate" iterationCount="infinite" iterationDelay={2000} style={{width: 200,height: 70,backgroundColor:"black",display: "flex",alignItems:"center",justifyContent: "center",borderRadius:10}}>
-       <Text style={{color: "white",fontSize: 28}}>PLAY AGAIN</Text>
-      </Animatable.View>
+      <View style={{display: "flex",flexDirection: "column", gap: 25}}>
+      <View style={{transform: [{rotateZ: "180deg"}]}}>
+        <Animatable.View onTouchStart={() => setRoute({path: "Select",data:{}})} animation="bounceIn" iterationDelay={2500} style={{width: 250,height: 70,backgroundColor:"black",display: "flex",alignItems:"center",justifyContent: "center",borderRadius:10}}>
+        <Text style={{color: "white",fontSize: 28}}>{i18n.t("view.score.goToSelect")}</Text>
+        </Animatable.View>
+      </View>
+      <View>
+        <Animatable.View onTouchStart={() => setRoute({path: "Game",data:{}})} animation="bounceIn" iterationDelay={2000} style={{width: 250,height: 70,backgroundColor:"black",display: "flex",alignItems:"center",justifyContent: "center",borderRadius:10}}>
+        <Text style={{color: "white",fontSize: 28}}>{i18n.t("view.score.playAgain")}</Text>
+        </Animatable.View>
+      </View>
+      </View>
       <View style={{transform:[{rotateZ: "0deg"}]}}>
         <CountUp onFinish={onFinish} points={10} isWinner={false}/>
       </View>
