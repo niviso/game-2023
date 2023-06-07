@@ -63,7 +63,7 @@ export default function ColorPad(props) {
         } else {
           setSkipNextUpdate(false);
         }
-    }, gameState.mode == GameMode.oneColor ? Time.getSecondsInMs(1) : Time.getSecondsInMs(2));
+    }, Time.getSecondsInMs(1));
   
     const onPress = ():void => {
       if(!active){
