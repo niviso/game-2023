@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 import { generateColor, Screen, Player } from "../../constants";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { MathHelper } from '../../helpers';
 import * as Animatable from 'react-native-animatable';
 import {failSound,stopSound,normalSound,pressSound} from "../../helpers/SoundPlayer";
@@ -9,7 +9,7 @@ import ColorPad from "../ColorPad";
 import {useInterval} from "../../helpers";
 
 export default function PlayerController(props){
-    const { player,active,setGameState,gameState } = props;
+    const { player,active,setGameState,gameState, setPlayerData } = props;
     const [points,setPoints] = useState<number>(0);
     const [powerMeter,setPowerMeter] = useState<number>(0);
     const [time,setTime] = useState<number>(MathHelper.randomIntFromInterval(2, 10));
@@ -38,6 +38,10 @@ export default function PlayerController(props){
         pressSound.play();
       }
     };
+
+    useEffect(() => {
+      setPlayerData({points: points, stopped: 0});
+    },[points]);
 
     useInterval(() => {
       if(!gameState.paused){

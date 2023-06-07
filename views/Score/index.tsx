@@ -5,24 +5,10 @@ import { useState,useRef } from "react";
 import i18n from "../../locales";
 
 export default function Score({ data,setRoute }) {
-  const tmpData={
-    mode: "versus",
-    player_1:{
-      stopped: 5,
-      points: 55
-    },
-    player_2:{
-      stopped: 2,
-      points: 50
-    }
-  }
-
-
-
-  const CountUp = ({points,isWinner,tmpData}) => {
+  const CountUp = ({points,isWinner,data}) => {
     const [currentPoints,setCurrentPoints] = useState<number>(0);
     const animatableRef = useRef<Animatable.View & View>(null);
-    const maxPoints = tmpData.player_1.points > tmpData.player_2.points ? tmpData.player_1.points : tmpData.player_2.points;
+    const maxPoints = data.playerOneData.points > data.playerTwoData.points ? data.playerOneData.points : data.playerTwoData.points;
     const velocityVector = maxPoints/points;
     const speedConstant = 50;  
     const speed = velocityVector * speedConstant;
@@ -65,7 +51,7 @@ export default function Score({ data,setRoute }) {
   return (
     <SafeAreaView style={{display: "flex",alignItems:"center",justifyContent: "space-between",width: "100%",height: "100%"}}>
       <View style={{transform:[{rotateZ: "180deg"}]}}>
-        <CountUp onFinish={onFinish} tmpData={tmpData} points={tmpData.player_1.points} isWinner={tmpData.player_1.points > tmpData.player_2.points}/>
+        <CountUp data={data} points={data.playerOneData.points} isWinner={data.playerOneData.points > data.playerTwoData.points}/>
       </View>
       <View style={{display: "flex",flexDirection: "column", gap: 25}}>
       <View style={{transform: [{rotateZ: "180deg"}]}}>
@@ -80,7 +66,7 @@ export default function Score({ data,setRoute }) {
       </View>
       </View>
       <View style={{transform:[{rotateZ: "0deg"}]}}>
-        <CountUp onFinish={onFinish} tmpData={tmpData} points={tmpData.player_2.points} isWinner={tmpData.player_2.points > tmpData.player_1.points}/>
+        <CountUp data={data} points={data.playerTwoData.points} isWinner={data.playerTwoData.points > data.playerOneData.points}/>
       </View>
 
     </SafeAreaView>

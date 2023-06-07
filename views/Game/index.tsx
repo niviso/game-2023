@@ -38,20 +38,19 @@ export default function Game({route,setRoute}:any) {
   const [gameState,setGameState] = useState<any>({mode: GameMode.oneColor,blocked: null,paused:false});
   const [gameTime,setGameTime] = useState<number>(0);
   const appState = useRef(AppState.currentState);
+  const [playerOneData,setPlayerOneData] = useState({points: 0, stopped: 0});
+  const [playerTwoData,setPlayerTwoData] = useState({points: 0, stopped: 0});
 
   useEffect(() => {
     if(clockSound.ready){
     clockSound.play();
     clockSound.setVolume(0.3);
-  return () => {
-    clockSound.destory();
-  }
-}
+    return () => {
+      clockSound.destory();
+    }
+    }
   },[clockSound.ready]);
 
-  useEffect(() => {
-
-  },[gameState.paused]);
 
   useEffect(() => {
     //Make into custom hook
@@ -80,9 +79,6 @@ export default function Game({route,setRoute}:any) {
   }
   }
   },[normalSound.ready]);
-  
-
-
 
   useEffect(() => {
     if(gameState.blocked){
@@ -99,7 +95,7 @@ export default function Game({route,setRoute}:any) {
   useInterval(() => {
     if(!gameState.paused){
       if(countDown === 0){
-        setGameTime(Time.getMinutes(1));
+        setGameTime(10);///(Time.getMinutes(1));
         setActive(true);
         setGameState((prevState) => ({...prevState,mode: GameMode.none}));
       }
@@ -111,7 +107,12 @@ export default function Game({route,setRoute}:any) {
     if(countDown == -1){
       setTimeout(()=> {
         if (gameTime == 0) {
-          setRoute({path:"Score",data:{}});
+          const data={
+            mode: "versus",
+            playerOneData: playerOneData,
+            playerTwoData: playerTwoData
+          }
+          setRoute({path:"Score",data:data});
         } else {
           !gameState.paused && setGameTime(gameTime - 1);
         }
@@ -144,10 +145,10 @@ export default function Game({route,setRoute}:any) {
       </View>
 
         <View style={styles.playerWrapper}>
-          <PlayerController setGameState={setGameState} gameState={gameState} active={active} player={Player.One} ai={route.data.solo ? false : true} />
+          <PlayerController setPlayerData={setPlayerOneData} setGameState={setGameState} gameState={gameState} active={active} player={Player.One} ai={route.data.solo ? false : true} />
         </View>
         <View style={styles.playerWrapper}>
-          <PlayerController setGameState={setGameState} gameState={gameState} active={active} player={Player.Two} ai={false} />
+          <PlayerController setPlayerData={setPlayerTwoData} setGameState={setGameState} gameState={gameState} active={active} player={Player.Two} ai={false} />
         </View>
       </View>
     </View>
