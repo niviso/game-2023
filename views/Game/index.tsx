@@ -105,7 +105,6 @@ export default function Game({route,setRoute}:any) {
 
   useInterval(() => {
     if(countDown == -1){
-      setTimeout(()=> {
         if (gameTime == 0) {
           const data={
             mode: "versus",
@@ -116,7 +115,6 @@ export default function Game({route,setRoute}:any) {
         } else {
           !gameState.paused && setGameTime(gameTime - 1);
         }
-      }, Time.getSecondsInMs(1));
     }  
   },Time.getSecondsInMs(Time.second));
 
