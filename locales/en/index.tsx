@@ -37,8 +37,13 @@ const en = {
       },
       game:{
         resume: "RESUME"
-
       },
+      score: {
+        goToSelect: "GO TO SELECT",
+        playAgain: "PLAY AGAIN",
+        winner: "WINNER",
+        looser: "LOOSER"
+      }
     },
     button: {
       credits: "CREDITS",
