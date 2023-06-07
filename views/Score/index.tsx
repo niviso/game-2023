@@ -5,16 +5,15 @@ import { useState,useRef } from "react";
 import i18n from "../../locales";
 
 export default function Score({ data,setRoute }) {
-  const [scoreData,setScoreData] = useState({playerOneWinner: false,playerTwoWinner: false});
   const tmpData={
     mode: "versus",
     player_1:{
       stopped: 5,
-      points: 10
+      points: 20
     },
     player_2:{
       stopped: 2,
-      points: 20
+      points: 50
     }
   }
 
@@ -23,16 +22,16 @@ export default function Score({ data,setRoute }) {
   }
 
 
-  const CountUp = ({points,onFinish,isWinner}) => {
+  const CountUp = ({points,onFinish,isWinner,tmpData}) => {
     const [currentPoints,setCurrentPoints] = useState<number>(0);
-    const [speed,setSpeed] = useState(0);
-    const animatableRef = useRef<Animatable.View & View>(null); 
+    const animatableRef = useRef<Animatable.View & View>(null);
+    const maxPoints = tmpData.player_1.points > tmpData.player_2.points ? tmpData.player_1.points : tmpData.player_2.points;
+    const velocityVector = maxPoints/points;
+    const speedConstant = 50;  
+    const speed = velocityVector * speedConstant;
     useInterval(() => {
       let newPoints = currentPoints + 1;
       setCurrentPoints(newPoints);
-      let normalized = ((currentPoints/points)/points);
-      let speedCalc  = normalized * 5000;
-      setSpeed(speedCalc);
       if(newPoints == points){
         onFinish();
         if(isWinner){
@@ -70,7 +69,7 @@ export default function Score({ data,setRoute }) {
   return (
     <SafeAreaView style={{display: "flex",alignItems:"center",justifyContent: "space-between",width: "100%",height: "100%"}}>
       <View style={{transform:[{rotateZ: "180deg"}]}}>
-        <CountUp onFinish={onFinish} points={20} isWinner={true}/>
+        <CountUp onFinish={onFinish} tmpData={tmpData} points={tmpData.player_1.points} isWinner={tmpData.player_1.points > tmpData.player_2.points}/>
       </View>
       <View style={{display: "flex",flexDirection: "column", gap: 25}}>
       <View style={{transform: [{rotateZ: "180deg"}]}}>
@@ -85,7 +84,7 @@ export default function Score({ data,setRoute }) {
       </View>
       </View>
       <View style={{transform:[{rotateZ: "0deg"}]}}>
-        <CountUp onFinish={onFinish} points={10} isWinner={false}/>
+        <CountUp onFinish={onFinish} tmpData={tmpData} points={tmpData.player_2.points} isWinner={tmpData.player_2.points > tmpData.player_1.points}/>
       </View>
 
     </SafeAreaView>
