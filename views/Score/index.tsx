@@ -9,7 +9,7 @@ export default function Score({ data,setRoute }) {
     mode: "versus",
     player_1:{
       stopped: 5,
-      points: 20
+      points: 55
     },
     player_2:{
       stopped: 2,
@@ -17,12 +17,9 @@ export default function Score({ data,setRoute }) {
     }
   }
 
-  const onFinish = () => {
-    return true;
-  }
 
 
-  const CountUp = ({points,onFinish,isWinner,tmpData}) => {
+  const CountUp = ({points,isWinner,tmpData}) => {
     const [currentPoints,setCurrentPoints] = useState<number>(0);
     const animatableRef = useRef<Animatable.View & View>(null);
     const maxPoints = tmpData.player_1.points > tmpData.player_2.points ? tmpData.player_1.points : tmpData.player_2.points;
@@ -33,7 +30,6 @@ export default function Score({ data,setRoute }) {
       let newPoints = currentPoints + 1;
       setCurrentPoints(newPoints);
       if(newPoints == points){
-        onFinish();
         if(isWinner){
           winnerAnimation();
         } else {
