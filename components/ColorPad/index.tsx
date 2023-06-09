@@ -5,15 +5,13 @@ import {useInterval} from "../../helpers";
 import { Color, Screen, generateColor,Time,GameMode,Player } from "../../constants";
 import { usePrevious } from "../../hooks";
 
-
-
-
 export default function ColorPad(props) {
     const { onClick, active, player, gameState } = props;
   
     const [color, setColor] = useState<string>(Color.white);
     const prevColor = usePrevious(color || Color.white);
     const [seed,setSeed] = useState<number>(0);
+    const [disabeled,setDisabeled] = useState<boolean>(false);
     
     const [skipNextUpdate,setSkipNextUpdate] = useState<boolean>(false);
     const animatableRef = useRef<Animatable.View & View>(null); 

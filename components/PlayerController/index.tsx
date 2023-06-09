@@ -16,7 +16,7 @@ export default function PlayerController(props){
     const [color,setColor] = useState<string>(generateColor());
     const animatableRef = useRef<Animatable.View & View>(null); 
     const ammountOfColorPads:number = 4; 
-  
+    //Color comes from parent, disable after click, base on ammountofcolorpads
     const onClick = (clickColor:string,player:string)=> {
       
       if(gameState.blocked == player){
